@@ -116,10 +116,10 @@ export default function TravelMap() {
               ) : (
                 <div className="relative w-full h-full bg-white dark:bg-gray-800">
                   <ComposableMap 
-                    projection="geoMercator"
+                    projection="geoEqualEarth"
                     projectionConfig={{
-                      scale: 150,
-                      center: [0, 30]
+                      scale: 175,
+                      center: [0, 0]
                     }}
                     style={{
                       width: "100%",

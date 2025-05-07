@@ -1,5 +1,6 @@
 // World map data in GeoJSON format for React Simple Maps
 
+// This is a simplified GeoJSON dataset with major countries represented as rectangular polygons
 export const worldGeoData = {
   "type": "FeatureCollection",
   "features": [
@@ -9,15 +10,15 @@ export const worldGeoData = {
       "properties": { "ISO_A2": "FR", "NAME": "France" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[2.5, 48.8], [1.7, 43.6], [7.5, 43.7], [6.0, 49.2], [2.5, 48.8]]]
+        "coordinates": [[[-5.1, 48.5], [-2.0, 42.3], [8.2, 42.2], [8.5, 49.0], [-5.1, 48.5]]]
       }
     },
     {
       "type": "Feature",
-      "properties": { "ISO_A2": "IT", "NAME": "Italy" },
+      "properties": { "ISO_A2": "DE", "NAME": "Germany" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[12.5, 41.9], [9.2, 45.5], [13.7, 45.6], [14.7, 41.2], [12.5, 41.9]]]
+        "coordinates": [[[5.9, 47.6], [15.0, 47.3], [15.0, 54.8], [5.9, 54.8], [5.9, 47.6]]]
       }
     },
     {
@@ -25,24 +26,15 @@ export const worldGeoData = {
       "properties": { "ISO_A2": "ES", "NAME": "Spain" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-3.7, 40.4], [-8.6, 42.6], [3.1, 42.4], [0.0, 38.0], [-3.7, 40.4]]]
+        "coordinates": [[[-9.5, 42.0], [-9.5, 36.0], [3.5, 36.0], [3.5, 42.0], [-9.5, 42.0]]]
       }
     },
     {
       "type": "Feature",
-      "properties": { "ISO_A2": "NL", "NAME": "Netherlands" },
+      "properties": { "ISO_A2": "IT", "NAME": "Italy" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[4.9, 52.4], [3.4, 51.5], [7.1, 52.6], [6.9, 53.5], [4.9, 52.4]]]
-      }
-    },
-    // More of Europe
-    {
-      "type": "Feature",
-      "properties": { "ISO_A2": "DE", "NAME": "Germany" },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[[10.5, 51.3], [6.1, 49.5], [14.0, 48.7], [14.6, 53.4], [10.5, 51.3]]]
+        "coordinates": [[[7.5, 43.0], [7.5, 36.5], [18.5, 36.5], [18.5, 47.0], [7.5, 47.0], [7.5, 43.0]]]
       }
     },
     {
@@ -50,16 +42,25 @@ export const worldGeoData = {
       "properties": { "ISO_A2": "GB", "NAME": "United Kingdom" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-0.1, 51.5], [-3.2, 55.9], [0.8, 52.5], [-2.6, 51.1], [-0.1, 51.5]]]
+        "coordinates": [[[-7.5, 49.5], [-7.5, 58.5], [2.0, 58.5], [2.0, 49.5], [-7.5, 49.5]]]
       }
     },
+    {
+      "type": "Feature",
+      "properties": { "ISO_A2": "RU", "NAME": "Russia" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[28.0, 41.0], [28.0, 82.0], [190.0, 82.0], [190.0, 41.0], [28.0, 41.0]]]
+      }
+    },
+    
     // North America
     {
       "type": "Feature",
       "properties": { "ISO_A2": "US", "NAME": "United States" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-98.5, 39.8], [-122.4, 37.8], [-80.2, 25.8], [-73.9, 40.7], [-98.5, 39.8]]]
+        "coordinates": [[[-125.0, 24.0], [-125.0, 49.0], [-66.0, 49.0], [-66.0, 24.0], [-125.0, 24.0]]]
       }
     },
     {
@@ -67,50 +68,25 @@ export const worldGeoData = {
       "properties": { "ISO_A2": "CA", "NAME": "Canada" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-97.2, 49.9], [-123.1, 49.3], [-63.6, 44.6], [-79.4, 43.7], [-97.2, 49.9]]]
-      }
-    },
-    // Asia
-    {
-      "type": "Feature",
-      "properties": { "ISO_A2": "JP", "NAME": "Japan" },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[[139.8, 35.7], [133.9, 34.7], [141.7, 43.0], [140.9, 37.5], [139.8, 35.7]]]
+        "coordinates": [[[-141.0, 48.0], [-141.0, 83.0], [-52.5, 83.0], [-52.5, 48.0], [-141.0, 48.0]]]
       }
     },
     {
       "type": "Feature",
-      "properties": { "ISO_A2": "CN", "NAME": "China" },
+      "properties": { "ISO_A2": "MX", "NAME": "Mexico" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[116.4, 39.9], [87.6, 43.8], [104.2, 35.2], [121.5, 31.2], [116.4, 39.9]]]
+        "coordinates": [[[-118.0, 14.0], [-118.0, 32.0], [-86.0, 32.0], [-86.0, 14.0], [-118.0, 14.0]]]
       }
     },
-    // Africa
-    {
-      "type": "Feature",
-      "properties": { "ISO_A2": "EG", "NAME": "Egypt" },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[[31.2, 30.0], [25.1, 31.5], [34.3, 31.0], [31.6, 22.9], [31.2, 30.0]]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": { "ISO_A2": "ZA", "NAME": "South Africa" },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[[18.4, -33.9], [22.8, -33.0], [31.1, -29.9], [28.2, -25.7], [18.4, -33.9]]]
-      }
-    },
+    
     // South America
     {
       "type": "Feature",
       "properties": { "ISO_A2": "BR", "NAME": "Brazil" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-47.9, -15.8], [-43.2, -22.9], [-56.1, -30.0], [-60.0, -3.0], [-47.9, -15.8]]]
+        "coordinates": [[[-74.0, 5.0], [-74.0, -34.0], [-34.0, -34.0], [-34.0, 5.0], [-74.0, 5.0]]]
       }
     },
     {
@@ -118,16 +94,61 @@ export const worldGeoData = {
       "properties": { "ISO_A2": "AR", "NAME": "Argentina" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-58.4, -34.6], [-64.0, -31.4], [-68.3, -54.8], [-57.6, -38.0], [-58.4, -34.6]]]
+        "coordinates": [[[-73.0, -22.0], [-73.0, -55.0], [-53.0, -55.0], [-53.0, -22.0], [-73.0, -22.0]]]
       }
     },
+    
+    // Africa
+    {
+      "type": "Feature",
+      "properties": { "ISO_A2": "ZA", "NAME": "South Africa" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[16.5, -35.0], [16.5, -22.0], [33.0, -22.0], [33.0, -35.0], [16.5, -35.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ISO_A2": "EG", "NAME": "Egypt" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[24.7, 22.0], [24.7, 31.5], [36.9, 31.5], [36.9, 22.0], [24.7, 22.0]]]
+      }
+    },
+    
+    // Asia
+    {
+      "type": "Feature",
+      "properties": { "ISO_A2": "CN", "NAME": "China" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[73.5, 18.0], [73.5, 53.5], [135.0, 53.5], [135.0, 18.0], [73.5, 18.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ISO_A2": "IN", "NAME": "India" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.0, 6.0], [68.0, 35.5], [97.5, 35.5], [97.5, 6.0], [68.0, 6.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ISO_A2": "JP", "NAME": "Japan" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[128.5, 30.0], [128.5, 45.5], [146.0, 45.5], [146.0, 30.0], [128.5, 30.0]]]
+      }
+    },
+    
     // Australia and Oceania
     {
       "type": "Feature",
       "properties": { "ISO_A2": "AU", "NAME": "Australia" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[151.2, -33.9], [115.9, -32.0], [138.6, -34.9], [153.0, -27.5], [151.2, -33.9]]]
+        "coordinates": [[[112.0, -43.0], [112.0, -10.0], [155.0, -10.0], [155.0, -43.0], [112.0, -43.0]]]
       }
     },
     {
@@ -135,7 +156,7 @@ export const worldGeoData = {
       "properties": { "ISO_A2": "NZ", "NAME": "New Zealand" },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[174.8, -36.9], [168.7, -45.0], [178.5, -38.0], [177.0, -41.3], [174.8, -36.9]]]
+        "coordinates": [[[165.0, -47.0], [165.0, -34.0], [179.0, -34.0], [179.0, -47.0], [165.0, -47.0]]]
       }
     }
   ]
