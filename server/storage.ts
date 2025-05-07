@@ -40,7 +40,7 @@ export class MemStorage implements IStorage {
     this.accessCodeCurrentId = 1;
 
     // Add default access code
-    this.createAccessCode({ code: "lovetravel", active: true });
+    this.createAccessCode({ code: "kuhfuersu", active: true });
 
     // Add sample locations
     this.createLocation({

@@ -22,7 +22,7 @@ export default function TravelMap() {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [showLocationDetails, setShowLocationDetails] = useState(false);
   const [showSidebar, setShowSidebar] = useState(!isMobile);
-  const [mapPosition, setMapPosition] = useState({ coordinates: [0, 30] as [number, number], zoom: 1.5 });
+  const [mapPosition, setMapPosition] = useState({ coordinates: [10, 30] as [number, number], zoom: 1 });
 
   // Fetch locations from API
   const { data: locations = [], isLoading, error } = useQuery({
@@ -114,75 +114,83 @@ export default function TravelMap() {
                   <p className="text-destructive">Error loading map data</p>
                 </div>
               ) : (
-                <ComposableMap projection="geoMercator">
-                  <ZoomableGroup 
-                    zoom={mapPosition.zoom} 
-                    center={mapPosition.coordinates}
-                    maxZoom={10}
+                <div className="relative w-full h-full bg-white dark:bg-gray-800">
+                  <ComposableMap 
+                    projection="geoEquirectangular"
+                    style={{
+                      width: "100%",
+                      height: "100%"
+                    }}
                   >
-                    <Geographies geography={worldGeoData}>
-                      {({ geographies }) =>
-                        geographies.map(geo => (
-                          <Geography
-                            key={geo.rsmKey}
-                            geography={geo}
-                            fill={
-                              visitedCountryCodes.includes(geo.properties.ISO_A2)
-                                ? "#10B981"
-                                : "var(--map-unvisited-color, #D6D6DA)"
-                            }
-                            stroke="var(--map-stroke-color, #FFFFFF)"
-                            style={{
-                              default: {
-                                fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
+                    <ZoomableGroup 
+                      zoom={mapPosition.zoom} 
+                      center={mapPosition.coordinates}
+                      maxZoom={10}
+                    >
+                      <Geographies geography={worldGeoData}>
+                        {({ geographies }) =>
+                          geographies.map(geo => (
+                            <Geography
+                              key={geo.rsmKey}
+                              geography={geo}
+                              fill={
+                                visitedCountryCodes.includes(geo.properties.ISO_A2)
                                   ? "#10B981"
-                                  : "var(--map-unvisited-color, #D6D6DA)",
-                                fillOpacity: visitedCountryCodes.includes(geo.properties.ISO_A2) ? 0.6 : 0.2,
-                                stroke: "var(--map-stroke-color, #FFFFFF)",
-                                strokeWidth: 0.5,
-                                outline: "none",
-                              },
-                              hover: {
-                                fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
-                                  ? "#047857"
-                                  : "var(--map-unvisited-color, #D6D6DA)",
-                                fillOpacity: visitedCountryCodes.includes(geo.properties.ISO_A2) ? 0.8 : 0.3,
-                                stroke: "var(--map-stroke-color, #FFFFFF)",
-                                strokeWidth: 0.5,
-                                outline: "none",
-                              },
-                              pressed: {
-                                fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
-                                  ? "#047857"
-                                  : "var(--map-unvisited-color, #D6D6DA)",
-                                outline: "none",
-                              },
-                            }}
-                          />
-                        ))
-                      }
-                    </Geographies>
-                    {locations.map((location) => (
-                      <Marker
-                        key={location.id}
-                        coordinates={[parseFloat(location.longitude), parseFloat(location.latitude)]}
-                        onClick={() => handleLocationSelect(location)}
-                      >
-                        <g
-                          fill="none"
-                          stroke="#F59E0B"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          transform="translate(-12, -24)"
+                                  : "var(--map-unvisited-color, #D6D6DA)"
+                              }
+                              stroke="var(--map-stroke-color, #FFFFFF)"
+                              style={{
+                                default: {
+                                  fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
+                                    ? "#10B981"
+                                    : "var(--map-unvisited-color, #D6D6DA)",
+                                  fillOpacity: visitedCountryCodes.includes(geo.properties.ISO_A2) ? 0.6 : 0.2,
+                                  stroke: "var(--map-stroke-color, #FFFFFF)",
+                                  strokeWidth: 0.5,
+                                  outline: "none",
+                                },
+                                hover: {
+                                  fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
+                                    ? "#047857"
+                                    : "var(--map-unvisited-color, #D6D6DA)",
+                                  fillOpacity: visitedCountryCodes.includes(geo.properties.ISO_A2) ? 0.8 : 0.3,
+                                  stroke: "var(--map-stroke-color, #FFFFFF)",
+                                  strokeWidth: 0.5,
+                                  outline: "none",
+                                },
+                                pressed: {
+                                  fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
+                                    ? "#047857"
+                                    : "var(--map-unvisited-color, #D6D6DA)",
+                                  outline: "none",
+                                },
+                              }}
+                            />
+                          ))
+                        }
+                      </Geographies>
+                      {locations.map((location) => (
+                        <Marker
+                          key={location.id}
+                          coordinates={[parseFloat(location.longitude), parseFloat(location.latitude)]}
+                          onClick={() => handleLocationSelect(location)}
                         >
-                          <circle cx="12" cy="10" r="3" fill="#F59E0B" />
-                          <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" fill="#F59E0B" />
-                        </g>
-                      </Marker>
-                    ))}
-                  </ZoomableGroup>
-                </ComposableMap>
+                          <g
+                            fill="none"
+                            stroke="#F59E0B"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            transform="translate(-12, -24)"
+                          >
+                            <circle cx="12" cy="10" r="3" fill="#F59E0B" />
+                            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" fill="#F59E0B" />
+                          </g>
+                        </Marker>
+                      ))}
+                    </ZoomableGroup>
+                  </ComposableMap>
+                </div>
               )}
             </div>
           </div>
