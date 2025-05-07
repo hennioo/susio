@@ -23,6 +23,8 @@
 --destructive-foreground: 60 9.1% 97.8%;
 --ring: 20 14.3% 4.1%;
 --radius: 0.5rem;
+--map-unvisited-color: #D6D6DA;
+--map-stroke-color: #FFFFFF;
   }
   .dark {
       --background: 240 10% 3.9%;
@@ -45,6 +47,8 @@
 --destructive-foreground: 0 0% 98%;
 --ring: 240 4.9% 83.9%;
 --radius: 0.5rem;
+--map-unvisited-color: #333336;
+--map-stroke-color: #1F1F23;
   }
 
 @layer base {

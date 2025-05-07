@@ -21,11 +21,11 @@ export default function LocationList({
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold font-heading text-gray-800">Our Destinations</h2>
+        <h2 className="text-xl font-bold font-heading text-foreground">Our Destinations</h2>
         {isMobile && (
           <button 
             onClick={onCloseSidebar}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-muted-foreground hover:text-foreground"
             aria-label="Close sidebar"
           >
             <X className="h-5 w-5" />
@@ -34,7 +34,7 @@ export default function LocationList({
       </div>
       
       <ScrollArea className="flex-grow pr-2">
-        <div className="divide-y divide-gray-200">
+        <div className="divide-y divide-border">
           {isLoading ? (
             // Loading skeletons
             Array.from({ length: 4 }).map((_, index) => (
@@ -49,21 +49,21 @@ export default function LocationList({
               </div>
             ))
           ) : locations.length === 0 ? (
-            <p className="py-6 text-center text-gray-500">No destinations found</p>
+            <p className="py-6 text-center text-muted-foreground">No destinations found</p>
           ) : (
             locations.map((location) => (
               <div 
                 key={location.id} 
-                className="py-3 cursor-pointer hover:bg-gray-50 transition"
+                className="py-3 cursor-pointer hover:bg-muted transition duration-200"
                 onClick={() => onSelectLocation(location)}
               >
                 <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-white" />
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center">
+                    <MapPin className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900">{location.name}</h3>
-                    <p className="text-xs text-gray-500">{location.date}</p>
+                    <h3 className="text-sm font-medium text-foreground">{location.name}</h3>
+                    <p className="text-xs text-muted-foreground">{location.date}</p>
                   </div>
                 </div>
               </div>
