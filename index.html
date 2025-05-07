@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktive Weltkarte mit Leaflet</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: Arial, sans-serif;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+        
+        .info-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        
+        .info-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .marker-info {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="info-container">
+        <div class="info-title">Interaktive Weltkarte</div>
+        <div class="marker-info">Klicken Sie auf die Marker für mehr Informationen</div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+    
+    <script>
+        // Karte initialisieren und auf die Welt zentrieren
+        const map = L.map('map').setView([20, 0], 2);
+        
+        // OpenStreetMap-Layer hinzufügen
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+        
+        // Beispiel-Marker hinzufügen
+        const locations = [
+            { name: "Paris", lat: 48.8566, lng: 2.3522, info: "Hauptstadt von Frankreich" },
+            { name: "New York", lat: 40.7128, lng: -74.0060, info: "Größte Stadt der USA" },
+            { name: "Tokyo", lat: 35.6762, lng: 139.6503, info: "Hauptstadt von Japan" },
+            { name: "Sydney", lat: -33.8688, lng: 151.2093, info: "Größte Stadt Australiens" },
+            { name: "Kapstadt", lat: -33.9249, lng: 18.4241, info: "Legislativhauptstadt Südafrikas" }
+        ];
+        
+        // Marker mit PopUps zur Karte hinzufügen
+        locations.forEach(location => {
+            const marker = L.marker([location.lat, location.lng]).addTo(map);
+            marker.bindPopup(`<b>${location.name}</b><br>${location.info}`);
+        });
+        
+        // Ereignisbehandlung für Benutzerinteraktionen
+        map.on('click', function(e) {
+            console.log("Kartenklick bei: " + e.latlng.lat.toFixed(5) + ", " + e.latlng.lng.toFixed(5));
+        });
+    </script>
+</body>
+</html>
