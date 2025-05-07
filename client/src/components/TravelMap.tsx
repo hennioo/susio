@@ -118,7 +118,7 @@ export default function TravelMap() {
                   <ComposableMap 
                     projection="geoEqualEarth"
                     projectionConfig={{
-                      scale: 175,
+                      scale: 140,
                       center: [0, 0]
                     }}
                     style={{
@@ -130,7 +130,7 @@ export default function TravelMap() {
                     <ZoomableGroup 
                       zoom={mapPosition.zoom} 
                       center={mapPosition.coordinates}
-                      maxZoom={8}
+                      maxZoom={12}
                     >
                       <Geographies geography={worldGeoData}>
                         {({ geographies }) =>
@@ -153,7 +153,7 @@ export default function TravelMap() {
                                       : "var(--map-unvisited-color, #E5E7EB)",
                                     fillOpacity: isVisited ? 0.8 : 0.3,
                                     stroke: "var(--map-stroke-color, #FFFFFF)",
-                                    strokeWidth: 0.5,
+                                    strokeWidth: 0.15,
                                     outline: "none",
                                   },
                                   hover: {
@@ -162,7 +162,7 @@ export default function TravelMap() {
                                       : "var(--map-unvisited-hover-color, #D1D5DB)",
                                     fillOpacity: isVisited ? 1 : 0.5,
                                     stroke: "var(--map-stroke-color, #FFFFFF)",
-                                    strokeWidth: 0.75,
+                                    strokeWidth: 0.3,
                                     outline: "none",
                                     cursor: "pointer"
                                   },
