@@ -32,7 +32,7 @@
   --map-unvisited-color: #E5E7EB;
   --map-unvisited-hover-color: #D1D5DB;
   --map-unvisited-pressed-color: #9CA3AF;
-  --map-stroke-color: #FFFFFF;
+  --map-stroke-color: #3F3F46;
   --map-marker-color: #F59E0B;
 }
 
@@ -66,7 +66,7 @@
   --map-unvisited-color: #334155;
   --map-unvisited-hover-color: #475569;
   --map-unvisited-pressed-color: #64748B;
-  --map-stroke-color: #0F172A;
+  --map-stroke-color: #94A3B8;
   --map-marker-color: #F59E0B;
 }
 
