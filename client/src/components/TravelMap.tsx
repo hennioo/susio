@@ -116,57 +116,66 @@ export default function TravelMap() {
               ) : (
                 <div className="relative w-full h-full bg-white dark:bg-gray-800">
                   <ComposableMap 
-                    projection="geoEquirectangular"
+                    projection="geoMercator"
+                    projectionConfig={{
+                      scale: 150,
+                      center: [0, 30]
+                    }}
                     style={{
                       width: "100%",
-                      height: "100%"
+                      height: "100%",
+                      backgroundColor: "var(--map-bg-color, #F1F5F9)"
                     }}
                   >
                     <ZoomableGroup 
                       zoom={mapPosition.zoom} 
                       center={mapPosition.coordinates}
-                      maxZoom={10}
+                      maxZoom={8}
                     >
                       <Geographies geography={worldGeoData}>
                         {({ geographies }) =>
-                          geographies.map(geo => (
-                            <Geography
-                              key={geo.rsmKey}
-                              geography={geo}
-                              fill={
-                                visitedCountryCodes.includes(geo.properties.ISO_A2)
-                                  ? "#10B981"
-                                  : "var(--map-unvisited-color, #D6D6DA)"
-                              }
-                              stroke="var(--map-stroke-color, #FFFFFF)"
-                              style={{
-                                default: {
-                                  fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
-                                    ? "#10B981"
-                                    : "var(--map-unvisited-color, #D6D6DA)",
-                                  fillOpacity: visitedCountryCodes.includes(geo.properties.ISO_A2) ? 0.6 : 0.2,
-                                  stroke: "var(--map-stroke-color, #FFFFFF)",
-                                  strokeWidth: 0.5,
-                                  outline: "none",
-                                },
-                                hover: {
-                                  fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
-                                    ? "#047857"
-                                    : "var(--map-unvisited-color, #D6D6DA)",
-                                  fillOpacity: visitedCountryCodes.includes(geo.properties.ISO_A2) ? 0.8 : 0.3,
-                                  stroke: "var(--map-stroke-color, #FFFFFF)",
-                                  strokeWidth: 0.5,
-                                  outline: "none",
-                                },
-                                pressed: {
-                                  fill: visitedCountryCodes.includes(geo.properties.ISO_A2)
-                                    ? "#047857"
-                                    : "var(--map-unvisited-color, #D6D6DA)",
-                                  outline: "none",
-                                },
-                              }}
-                            />
-                          ))
+                          geographies.map(geo => {
+                            const isVisited = visitedCountryCodes.includes(geo.properties.ISO_A2);
+                            return (
+                              <Geography
+                                key={geo.rsmKey}
+                                geography={geo}
+                                fill={
+                                  isVisited
+                                    ? "var(--map-visited-color, #10B981)"
+                                    : "var(--map-unvisited-color, #E5E7EB)"
+                                }
+                                stroke="var(--map-stroke-color, #FFFFFF)"
+                                style={{
+                                  default: {
+                                    fill: isVisited
+                                      ? "var(--map-visited-color, #10B981)"
+                                      : "var(--map-unvisited-color, #E5E7EB)",
+                                    fillOpacity: isVisited ? 0.8 : 0.3,
+                                    stroke: "var(--map-stroke-color, #FFFFFF)",
+                                    strokeWidth: 0.5,
+                                    outline: "none",
+                                  },
+                                  hover: {
+                                    fill: isVisited
+                                      ? "var(--map-visited-hover-color, #059669)"
+                                      : "var(--map-unvisited-hover-color, #D1D5DB)",
+                                    fillOpacity: isVisited ? 1 : 0.5,
+                                    stroke: "var(--map-stroke-color, #FFFFFF)",
+                                    strokeWidth: 0.75,
+                                    outline: "none",
+                                    cursor: "pointer"
+                                  },
+                                  pressed: {
+                                    fill: isVisited
+                                      ? "var(--map-visited-pressed-color, #047857)"
+                                      : "var(--map-unvisited-pressed-color, #9CA3AF)",
+                                    outline: "none",
+                                  },
+                                }}
+                              />
+                            )
+                          })
                         }
                       </Geographies>
                       {locations.map((location) => (
@@ -177,14 +186,14 @@ export default function TravelMap() {
                         >
                           <g
                             fill="none"
-                            stroke="#F59E0B"
+                            stroke="var(--map-marker-color, #F59E0B)"
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             transform="translate(-12, -24)"
                           >
-                            <circle cx="12" cy="10" r="3" fill="#F59E0B" />
-                            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" fill="#F59E0B" />
+                            <circle cx="12" cy="10" r="3" fill="var(--map-marker-color, #F59E0B)" />
+                            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" fill="var(--map-marker-color, #F59E0B)" />
                           </g>
                         </Marker>
                       ))}
