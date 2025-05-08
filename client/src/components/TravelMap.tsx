@@ -206,10 +206,17 @@ export default function TravelMap() {
                       zoom={mapZoom} 
                     />
                     
-                    {/* Kartenstil mit reduziertem Detail und Pastellfarben */}
+                    {/* Terrain-Kartenstil mit Relief und Höheninformationen */}
                     <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
+                    />
+                    
+                    {/* Zusätzliche Relief-Layer */}
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a>'
+                      url="https://tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png"
+                      opacity={0.4}
                     />
                     
                     {/* Kreise für besuchte Orte mit fließendem Farbverlauf (Gradient) */}
