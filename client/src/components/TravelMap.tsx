@@ -27,9 +27,9 @@ const DefaultIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-// Pastellrosa Marker für besuchte Orte, passt besser zum Wasserfarben-Style
+// Orange Marker für besuchte Orte
 const VisitedIcon = new L.Icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -233,10 +233,10 @@ export default function TravelMap() {
                         // Sanfte Kurve für einen sehr natürlichen Verlauf
                         const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
                         
-                        // Farbverlauf von hellerem zu dunklerem Lila mit mehr Zwischenstufen
-                        const hue = 290; // Lila-Farbton
-                        const saturation = 75 + (progress * 10); // Leicht zunehmende Sättigung
-                        const lightness = 85 - (progress * 25); // Von sehr hell nach dunkler
+                        // Farbverlauf von hellerem zu dunklerem Orange mit mehr Zwischenstufen
+                        const hue = 30; // Orange-Farbton
+                        const saturation = 85 + (progress * 15); // Höhere Sättigung für kräftigeres Orange
+                        const lightness = 80 - (progress * 25); // Von sehr hell nach dunkler
                         
                         gradientCircles.push(
                           <Circle
