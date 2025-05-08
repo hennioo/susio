@@ -414,16 +414,36 @@ export default function TravelMap() {
                         icon={VisitedIcon}
                         eventHandlers={{
                           click: () => {
-                            // Im Bearbeitungsmodus keine Details anzeigen
-                            if (!isEditMode) {
-                              handleLocationSelect(location);
-                            }
+                            // In beiden Modi (Normal und Bearbeiten) Details anzeigen
+                            handleLocationSelect(location);
                           }
                         }}
                       >
                         <Popup>
                           <div className="font-medium">{location.name}</div>
                           <div className="text-sm text-muted-foreground">{location.date}</div>
+                          {isEditMode && (
+                            <div className="mt-2">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleLocationSelect(location);
+                                }} 
+                                className="text-xs bg-orange-500 hover:bg-orange-600 text-white py-1 px-2 rounded-sm mr-1"
+                              >
+                                Details anzeigen
+                              </button>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleLocationDelete(location.id);
+                                }} 
+                                className="text-xs bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-sm"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          )}
                         </Popup>
                       </Marker>
                     ))}
