@@ -27,9 +27,9 @@ const DefaultIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-// Grüner Marker für besuchte Orte
+// Pastellrosa Marker für besuchte Orte, passt besser zum Wasserfarben-Style
 const VisitedIcon = new L.Icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -202,9 +202,10 @@ export default function TravelMap() {
                     />
                     
                     {/* Kartenstil mit reduziertem Detail */}
+                    {/* Pastell Kartenstil mit zarteren Farben */}
                     <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://stamen.com">Stamen Design</a>'
+                      url="https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg"
                     />
                     
                     {/* Marker für alle Standorte */}
