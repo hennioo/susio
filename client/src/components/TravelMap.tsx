@@ -346,48 +346,15 @@ export default function TravelMap() {
                       
                       // Radialgradient-CSS für den Kreis definieren
                       const gradientStyle = {
-                        fillOpacity: 1,
-                        // Radialgradient von Innen (intensiveres Orange) nach Außen (transparentes Orange)
-                        fillColor: 'transparent',
-                        className: `location-gradient-${location.id}`,
+                        fillOpacity: 0.4,
+                        // Orangefarbe für den Kreis
+                        fillColor: '#f2960c',
                         color: 'transparent',
                         weight: 0
                       };
                       
-                      // Der dynamische CSS-Style wird einmalig in der Komponente eingefügt
-                      useEffect(() => {
-                        // Füge eine Stil-Regel für diesen spezifischen Gradienten hinzu
-                        const styleId = `gradient-style-${location.id}`;
-                        
-                        // Entferne vorhandenen Stil, falls dieser existiert
-                        const existingStyle = document.getElementById(styleId);
-                        if (existingStyle) {
-                          existingStyle.remove();
-                        }
-                        
-                        // Erstelle eine neue Stil-Regel
-                        const style = document.createElement('style');
-                        style.id = styleId;
-                        style.innerHTML = `
-                          .location-gradient-${location.id} {
-                            background: radial-gradient(
-                              circle, 
-                              hsla(38, 91%, 55%, 0.4) 0%,
-                              hsla(38, 91%, 60%, 0.35) 20%,
-                              hsla(38, 91%, 65%, 0.25) 40%,
-                              hsla(38, 91%, 70%, 0.15) 60%,
-                              hsla(38, 91%, 75%, 0.05) 80%,
-                              transparent 100%
-                            ) !important;
-                          }
-                        `;
-                        document.head.appendChild(style);
-                        
-                        // Stil entfernen, wenn Komponente unmounted
-                        return () => {
-                          document.getElementById(styleId)?.remove();
-                        };
-                      }, [location.id]);
+                      // Wir brauchen keinen speziellen Klassennamen mehr
+                      // Einfacher Kreis mit Transparenz ist ausreichend
                       
                       return (
                         <Circle
