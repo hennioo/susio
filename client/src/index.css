@@ -79,3 +79,21 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* Kartenstile für angepasste Wasser-Farben */
+.leaflet-container {
+  /* Erhöht die Sättigung und ändert den Farbton für intensiveres Türkis-Blau im Wasser */
+  filter: hue-rotate(-15deg) saturate(1.4);
+}
+
+/* Stil-Anpassungen für Wasserflächen speziell - 
+   Alle Tiles werden beeinflusst, aber die Änderung ist bei Wasser am auffälligsten */
+.leaflet-tile-pane {
+  filter: contrast(1.2) saturate(1.5);
+}
+
+/* Spezifischer Stil für die Hintergrundkarten-Ebene */
+.leaflet-layer:first-child {
+  /* Noch spezifischere Anpassung für die Kartenlayer */
+  filter: brightness(1.05) contrast(1.1);
+}

@@ -209,14 +209,14 @@ export default function TravelMap() {
                     {/* Terrain-Kartenstil mit Relief und Höheninformationen */}
                     <TileLayer
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
+                      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
                     />
                     
                     {/* Zusätzliche Relief-Layer */}
                     <TileLayer
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a>'
                       url="https://tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png"
-                      opacity={0.4}
+                      opacity={0.5}
                     />
                     
                     {/* Kreise für besuchte Orte mit fließendem Farbverlauf (Gradient) */}
