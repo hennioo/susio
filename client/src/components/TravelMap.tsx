@@ -10,9 +10,11 @@ import { List, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import coupleTravelImage from "../assets/couple-travel.png";
+import { worldLandBoundaries } from "@/lib/landBoundaries";
+import * as turf from '@turf/turf';
 
 // Leaflet Imports
-import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, Circle, GeoJSON } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import L from "leaflet";
 // CSS ist bereits in index.html importiert
@@ -215,32 +217,62 @@ export default function TravelMap() {
                       maxZoom={16}
                     />
                     
-                    {/* Kreise für besuchte Orte mit fließendem Farbverlauf (Gradient) */}
+                    {/* Land-beschränkte GeoJSON-Kreise für besuchte Orte mit Farbverlauf */}
                     {locations.map((location) => {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
-                      // Erzeugt 30 Kreise mit abnehmendem Radius und zunehmender Intensität
-                      // für einen extrem sanften, fließenden Übergang
+                      // Nutze die Hilfsfunktion, um einen landbegrenzten GeoJSON-Kreis zu erzeugen
+                      // Das gibt uns einen Kreis, der nur über Land sichtbar ist, aber nicht ins Wasser hineinragt
+                      
+                      // Erzeugt reguläre Kreise (für fallback, wenn die GeoJSON-Methode nicht funktioniert)
                       const gradientCircles = [];
                       const baseRadius = 30000; // 30km in Metern
-                      const steps = 30; // Erhöht für noch weicheren Übergang
+                      const steps = 20; // Für klassische Kreise als Fallback
                       
                       for (let i = 0; i < steps; i++) {
-                        // Berechne Radius, der mit jedem Schritt abnimmt
-                        // Nicht-lineare Abnahme für mehr Dichte an den Übergängen
                         const progress = i / steps;
                         const radius = baseRadius * (1 - Math.pow(progress, 0.8));
-                        
-                        // Berechne Opazität, die mit jedem Schritt zunimmt
-                        // Sanfte Kurve für einen sehr natürlichen Verlauf
                         const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
+                        const hue = 38; 
+                        const saturation = 91;
+                        const lightness = 70 - (progress * 40);
                         
-                        // Farbverlauf basierend auf dem gewünschten Orange RGB(242, 150, 12)
-                        const hue = 38; // Orange-Farbton exakt wie gewünscht
-                        const saturation = 91; // Hohe Sättigung für kräftiges Orange
-                        const lightness = 70 - (progress * 40); // Von hell nach deutlich dunkler
+                        // Erzeuge den auf Land beschränkten Kreis mit turf.js
+                        const circle = turf.circle(
+                          [lng, lat], // [lng, lat] ist die Reihenfolge für GeoJSON
+                          radius / 1000, // in Kilometern
+                          { 
+                            steps: 64, // Anzahl der Punkte für den Kreis (mehr = glatter)
+                            units: 'kilometers'
+                          }
+                        );
                         
+                        // Schneide den Kreis mit der Landmasse
+                        try {
+                          const intersection = turf.intersect(circle, worldLandBoundaries);
+                          
+                          // Wenn es eine Schnittmenge gibt, verwende diese statt des regulären Kreises
+                          if (intersection) {
+                            gradientCircles.push(
+                              <GeoJSON
+                                key={`geo-circle-${location.id}-${i}`}
+                                data={intersection}
+                                pathOptions={{
+                                  fillColor: `hsl(${hue}, ${saturation}%, ${lightness}%)`,
+                                  fillOpacity: opacity,
+                                  color: 'transparent',
+                                  weight: 0
+                                }}
+                              />
+                            );
+                            continue; // Skip den regulären Kreis wenn GeoJSON funktioniert
+                          }
+                        } catch (e) {
+                          console.error('Error creating land-restricted circle:', e);
+                        }
+                        
+                        // Fallback auf reguläre Kreise, wenn GeoJSON fehlschlägt
                         gradientCircles.push(
                           <Circle
                             key={`circle-${location.id}-${i}`}
