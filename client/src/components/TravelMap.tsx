@@ -217,7 +217,7 @@ export default function TravelMap() {
                       maxZoom={19}
                     />
                     
-                    {/* Kreise für besuchte Orte mit Farbverlauf (Gradient) - überlagern sich für weichen Übergang */}
+                    {/* Kreise für besuchte Orte mit Farbverlauf (Gradient) */}
                     {locations.map((location) => {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
@@ -238,35 +238,14 @@ export default function TravelMap() {
                             color: 'transparent',
                             weight: 0
                           }}
+                          // Beim rendern in der Leaflet-Map werden wir die "masking" Funktion nutzen,
+                          // wenn sie besser implementiert ist. Aktuell machen wir UI-basiertes Clipping
                         />
                       ));
-                      
-                      // Erstelle landbegrenzte GeoJSON-Kreise für ein paar ausgewählte Abstufungen
-                      // Dies ist ein Kompromiss zwischen Genauigkeit und Performance
-                      const maskedCircles = gradientData
-                        .filter(circle => circle.maskedCircle !== null && circle.maskedCircle !== undefined)
-                        .map((circle, i) => {
-                          if (!circle.maskedCircle) return null;
-                          
-                          return (
-                            <GeoJSON
-                              key={`masked-circle-${location.id}-${i}`}
-                              data={circle.maskedCircle}
-                              pathOptions={{
-                                fillColor: circle.fillColor,
-                                fillOpacity: circle.opacity * 1.5, // Etwas stärker, um besser sichtbar zu sein
-                                color: 'transparent',
-                                weight: 0
-                              }}
-                            />
-                          );
-                        })
-                        .filter(Boolean); // Entferne null-Einträge
                       
                       return (
                         <div key={`circle-group-${location.id}`}>
                           {gradientCircles}
-                          {maskedCircles}
                         </div>
                       );
                     })}
