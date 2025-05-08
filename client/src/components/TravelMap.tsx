@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { List, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import coupleTravelImage from "../assets/couple-travel.png";
 
 // Leaflet Imports
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
@@ -126,28 +127,38 @@ export default function TravelMap() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-card shadow-sm h-20">
+      <header className="bg-card shadow-sm h-20 relative z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-3">
+            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary flex-shrink-0">
+              <img 
+                src={coupleTravelImage} 
+                alt="Couple traveling" 
+                className="h-full w-full object-cover"
+              />
+            </div>
             <h1 className="text-2xl font-bold font-heading text-foreground">Our Travel Map</h1>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 relative z-50">
             {isMobile && (
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={() => setShowSidebar(!showSidebar)}
-                className="md:hidden"
+                className="md:hidden relative z-50"
               >
                 <List className="h-4 w-4 mr-2" />
                 Locations
               </Button>
             )}
-            <ThemeModeToggle />
+            <div className="relative z-50">
+              <ThemeModeToggle />
+            </div>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={handleLogout}
+              className="relative z-50"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Exit
