@@ -354,9 +354,11 @@ export default function TravelMap() {
                         const progress = i / totalCircles;
                         const radius = 50000 * (1 - progress * 0.9);  // Bis auf 10% des Radius schrumpfen
                         
-                        // SEHR geringe Opazität überall - nur leichte Andeutung der Farbe
-                        // Beginnt sehr transparent (1.5%) und wird nur leicht intensiver (10%)
-                        const opacity = 0.015 + (0.085 * (1 - progress));
+                        // Exponentielle Abnahme der Opazität nach außen hin
+                        // In der Mitte sichtbar, aber schnell durchsichtig werdend
+                        // e^(-5x) ist eine Funktion, die sehr schnell abfällt
+                        const innerOpacity = 0.20; // Maximum in der Mitte
+                        const opacity = innerOpacity * Math.exp(-5 * progress);
                         
                         circles.push(
                           <Circle
