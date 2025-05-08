@@ -155,6 +155,9 @@ export default function TravelMap() {
     if (isEditMode) {
       setNewLocationMarker(null);
       setIsAddingLocation(false);
+    } else {
+      // Wenn wir in den Bearbeitungsmodus wechseln, die Sidebar automatisch anzeigen
+      setShowSidebar(true);
     }
     
     setIsEditMode(prev => !prev);
