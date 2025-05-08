@@ -4,7 +4,7 @@ import {
   accessCodes, type AccessCode, type InsertAccessCode
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -179,7 +179,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getLocations(): Promise<Location[]> {
-    return await db.select().from(locations);
+    // Sortiere Orte nach ID absteigend (neueste zuerst)
+    return await db.select().from(locations).orderBy(desc(locations.id));
   }
 
   async getLocation(id: number): Promise<Location | undefined> {

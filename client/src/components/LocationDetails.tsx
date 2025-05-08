@@ -42,16 +42,34 @@ export default function LocationDetails({
     >
       <Card className="max-w-md w-full mx-auto overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
         <div className="relative">
-          <img 
-            src={location.image} 
-            alt={`View of ${location.name}`}
-            className="w-full h-48 object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.onerror = null;
-              target.src = 'https://placehold.co/600x400/orange/white?text=Bild+nicht+verfügbar';
-            }}
-          />
+          <div className="w-full h-48 bg-orange-500 relative">
+            {location.image ? (
+              <img 
+                src={location.image} 
+                alt={`View of ${location.name}`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  // Verstecke das fehlerhafte Bild
+                  target.style.display = 'none';
+                  // Zeige den Fallback-Container
+                  const parent = target.parentElement;
+                  if (parent) {
+                    parent.classList.add('flex', 'items-center', 'justify-center');
+                    const fallbackText = document.createElement('div');
+                    fallbackText.className = 'text-white text-xl font-bold';
+                    fallbackText.textContent = 'Bild nicht verfügbar';
+                    parent.appendChild(fallbackText);
+                  }
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="text-white text-xl font-bold">Bild nicht verfügbar</span>
+              </div>
+            )}
+          </div>
           <Button
             size="icon"
             variant="outline"

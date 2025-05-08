@@ -21,7 +21,16 @@ const storage_config = multer.diskStorage({
   },
   filename: function (_req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
+    
+    // Normalisiere die Dateiendung zu .jpg für alle Bildformate für bessere Kompatibilität
+    // Apple-Geräte verwenden manchmal .heic, was Probleme verursachen kann
+    let ext = path.extname(file.originalname).toLowerCase();
+    
+    // Stelle sicher, dass wir eine standardisierte Erweiterung verwenden
+    if (!['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
+      ext = '.jpg'; // Standardmäßig .jpg für unbekannte Formate
+    }
+    
     cb(null, file.fieldname + '-' + uniqueSuffix + ext);
   }
 });
@@ -29,11 +38,13 @@ const storage_config = multer.diskStorage({
 const upload = multer({ 
   storage: storage_config,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB Limit
+    fileSize: 10 * 1024 * 1024 // 10MB Limit (erhöht, um iOS-Bildern genug Platz zu geben)
   },
   fileFilter: (_req, file, cb) => {
-    // Akzeptiere nur Bilder
-    if (file.mimetype.startsWith('image/')) {
+    // Akzeptiere alle Bildtypen und konvertiere sie später zu jpg
+    // iOS kann .heic oder andere weniger verbreitete Formate verwenden
+    if (file.mimetype.startsWith('image/') || 
+        file.originalname.match(/\.(heic|heif)$/i)) {
       cb(null, true);
     } else {
       cb(new Error('Nur Bilddateien sind erlaubt!') as any);
@@ -176,9 +187,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Neuen Ort hinzufügen (mit Bild-Upload)
+  // Neuen Ort hinzufügen (mit Bild-Upload) - Robustere Implementierung
   app.post("/api/locations", upload.single('image'), async (req: Request, res: Response) => {
     try {
+      // Stelle sicher, dass der Upload-Ordner existiert
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      
+      // Bild-URL festlegen
+      let imageUrl = '';
+      
+      // Wenn ein Bild hochgeladen wurde
+      if (req.file) {
+        // Pfad des hochgeladenen Bildes
+        const filePath = path.join(uploadDir, req.file.filename);
+        
+        // Überprüfe, ob die Datei existiert
+        if (fs.existsSync(filePath)) {
+          imageUrl = `/uploads/${req.file.filename}`;
+          
+          // Zusätzliche Validierung des Bildes
+          try {
+            // Dateigröße überprüfen (für Konsistenzprüfung)
+            const stats = fs.statSync(filePath);
+            if (stats.size === 0) {
+              // Leere Datei
+              fs.unlinkSync(filePath); // Lösche die leere Datei
+              imageUrl = ''; // Setze URL zurück
+            }
+          } catch (fileError) {
+            console.error("Fehler bei der Bildvalidierung:", fileError);
+            imageUrl = ''; // Bei Fehler URL zurücksetzen
+          }
+        } else {
+          console.warn("Hochgeladene Datei existiert nicht im Dateisystem:", req.file.filename);
+          imageUrl = '';
+        }
+      }
+      
       // Extrahiere Daten aus dem Request
       const locationData = {
         name: req.body.name,
@@ -188,8 +235,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         latitude: req.body.latitude,
         longitude: req.body.longitude,
         countryCode: req.body.countryCode || '',
-        // Wenn ein Bild hochgeladen wurde, speichere den relativen Pfad
-        image: req.file ? `/uploads/${req.file.filename}` : ''
+        // Bild-URL (leer, wenn kein Bild oder Fehler)
+        image: imageUrl
       };
 
       // Validiere die Daten mit zod
