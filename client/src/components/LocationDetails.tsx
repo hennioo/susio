@@ -40,12 +40,17 @@ export default function LocationDetails({
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <Card className="max-w-md w-full mx-auto overflow-hidden animate-in zoom-in-95 duration-200">
+      <Card className="max-w-md w-full mx-auto overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
         <div className="relative">
           <img 
             src={location.image} 
             alt={`View of ${location.name}`}
             className="w-full h-48 object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = 'https://placehold.co/600x400/orange/white?text=Bild+nicht+verfügbar';
+            }}
           />
           <Button
             size="icon"
@@ -57,7 +62,7 @@ export default function LocationDetails({
           </Button>
         </div>
         
-        <CardContent className="p-5">
+        <CardContent className="p-5 overflow-y-auto">
           <h3 className="text-xl font-bold font-heading text-foreground mb-1">{location.name}</h3>
           <p className="text-sm text-muted-foreground mb-3">{location.date}</p>
           
