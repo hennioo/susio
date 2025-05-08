@@ -83,7 +83,6 @@ export default function AccessGate() {
         <CardContent className="p-8 relative">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold font-heading text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Susibert</h1>
-            <p className="mt-2 text-muted-foreground">Enter the access code to view our journey together</p>
           </div>
 
           <Form {...form}>
