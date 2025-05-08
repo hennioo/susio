@@ -1,19 +1,37 @@
 import type { LocationData } from "./TravelMap";
-import { X, Heart } from "lucide-react";
+import { X, Heart, Trash2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
 
 interface LocationDetailsProps {
   location: LocationData;
   onClose: () => void;
   onViewOnMap: () => void;
+  onDelete?: (id: number) => void;
+  isEditMode?: boolean;
 }
 
-export default function LocationDetails({ location, onClose, onViewOnMap }: LocationDetailsProps) {
+export default function LocationDetails({ 
+  location, 
+  onClose, 
+  onViewOnMap, 
+  onDelete, 
+  isEditMode = false 
+}: LocationDetailsProps) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  
   // Handle clicks outside the modal content to close it
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
+    }
+  };
+  
+  // Funktion zum Löschen des Ortes
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(location.id);
     }
   };
 
@@ -55,13 +73,49 @@ export default function LocationDetails({ location, onClose, onViewOnMap }: Loca
               <Heart className="h-4 w-4 text-primary mr-1" />
               <span>{location.highlight}</span>
             </div>
-            <Button
-              size="sm"
-              className="bg-primary hover:bg-primary/90"
-              onClick={onViewOnMap}
-            >
-              View on Map
-            </Button>
+            
+            <div className="flex gap-2">
+              {isEditMode && onDelete && !confirmDelete && (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Löschen
+                </Button>
+              )}
+              
+              {isEditMode && confirmDelete && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={handleDelete}
+                  >
+                    <AlertTriangle className="h-4 w-4 mr-1" />
+                    Bestätigen
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    Abbrechen
+                  </Button>
+                </>
+              )}
+              
+              {(!isEditMode || !confirmDelete) && (
+                <Button
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={onViewOnMap}
+                >
+                  View on Map
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

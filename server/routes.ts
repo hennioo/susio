@@ -121,6 +121,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Delete location by ID
+  app.delete("/api/locations/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ 
+          message: "Invalid location ID" 
+        });
+      }
+      
+      // Überprüfen, ob der Ort existiert
+      const location = await storage.getLocation(id);
+      
+      if (!location) {
+        return res.status(404).json({ 
+          message: "Location not found" 
+        });
+      }
+      
+      // Wenn die Location ein eigenes Bild hat (kein externes URL), lösche die Datei
+      if (location.image && location.image.startsWith('/uploads/')) {
+        try {
+          const filePath = path.join(process.cwd(), location.image.substring(1));
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        } catch (fileError) {
+          console.error("Error deleting image file:", fileError);
+          // Wir löschen den Ort trotzdem, auch wenn das Löschen des Bildes fehlschlägt
+        }
+      }
+      
+      // Ort löschen
+      const success = await storage.deleteLocation(id);
+      
+      if (success) {
+        return res.status(200).json({ 
+          success: true, 
+          message: "Location deleted successfully" 
+        });
+      } else {
+        return res.status(500).json({ 
+          success: false, 
+          message: "Failed to delete location" 
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting location:", error);
+      return res.status(500).json({ 
+        message: "Internal server error" 
+      });
+    }
+  });
+  
   // Neuen Ort hinzufügen (mit Bild-Upload)
   app.post("/api/locations", upload.single('image'), async (req: Request, res: Response) => {
     try {

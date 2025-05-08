@@ -189,6 +189,39 @@ export default function TravelMap() {
       description: "Der neue Ort wurde erfolgreich hinzugefügt."
     });
   };
+  
+  // Ort löschen
+  const handleLocationDelete = async (locationId: number) => {
+    try {
+      const response = await fetch(`/api/locations/${locationId}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Fehler beim Löschen des Ortes");
+      }
+      
+      // Details-Modal schließen
+      setShowLocationDetails(false);
+      setSelectedLocation(null);
+      
+      // QueryCache aktualisieren
+      queryClient.invalidateQueries({ queryKey: ["/api/locations"] });
+      
+      toast({
+        title: "Ort gelöscht",
+        description: "Der Ort wurde erfolgreich gelöscht."
+      });
+    } catch (error) {
+      console.error("Error deleting location:", error);
+      toast({
+        title: "Fehler",
+        description: error instanceof Error ? error.message : "Unbekannter Fehler beim Löschen",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">

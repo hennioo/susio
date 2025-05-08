@@ -15,6 +15,7 @@ export interface IStorage {
   getLocations(): Promise<Location[]>;
   getLocation(id: number): Promise<Location | undefined>;
   createLocation(location: InsertLocation): Promise<Location>;
+  deleteLocation(id: number): Promise<boolean>;
   
   // Access code methods
   getAccessCodes(): Promise<AccessCode[]>;
@@ -121,6 +122,16 @@ export class MemStorage implements IStorage {
     this.locations.set(id, location);
     return location;
   }
+  
+  async deleteLocation(id: number): Promise<boolean> {
+    // Überprüfen, ob der Ort existiert
+    if (!this.locations.has(id)) {
+      return false;
+    }
+    
+    // Ort löschen
+    return this.locations.delete(id);
+  }
 
   // Access code methods
   async getAccessCodes(): Promise<AccessCode[]> {
@@ -134,7 +145,12 @@ export class MemStorage implements IStorage {
 
   async createAccessCode(insertAccessCode: InsertAccessCode): Promise<AccessCode> {
     const id = this.accessCodeCurrentId++;
-    const accessCode: AccessCode = { ...insertAccessCode, id };
+    // Stelle sicher, dass 'active' immer einen boolean-Wert hat
+    const accessCode: AccessCode = { 
+      ...insertAccessCode, 
+      id,
+      active: insertAccessCode.active === undefined ? true : insertAccessCode.active
+    };
     this.accessCodes.set(id, accessCode);
     return accessCode;
   }
