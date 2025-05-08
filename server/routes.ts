@@ -1,9 +1,50 @@
-import type { Express } from "express";
+import express, { type Express, type Request, type Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { validateAccessCodeSchema } from "@shared/schema";
+import { validateAccessCodeSchema, insertLocationSchema } from "@shared/schema";
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
+// Setup für Datei-Uploads
+const uploadDir = path.join(process.cwd(), 'uploads');
+
+// Stelle sicher, dass der Upload-Ordner existiert
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Konfiguration für multer (für Bild-Uploads)
+const storage_config = multer.diskStorage({
+  destination: function (_req, _file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (_req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({ 
+  storage: storage_config,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB Limit
+  },
+  fileFilter: (_req, file, cb) => {
+    // Akzeptiere nur Bilder
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Nur Bilddateien sind erlaubt!') as any);
+    }
+  }
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Statischer Dateizugriff für Uploads
+  app.use('/uploads', express.static(uploadDir));
+
   // API Routes
   
   // Validate access code
@@ -76,6 +117,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error getting location:", error);
       return res.status(500).json({ 
         message: "Internal server error" 
+      });
+    }
+  });
+  
+  // Neuen Ort hinzufügen (mit Bild-Upload)
+  app.post("/api/locations", upload.single('image'), async (req: Request, res: Response) => {
+    try {
+      // Extrahiere Daten aus dem Request
+      const locationData = {
+        name: req.body.name,
+        description: req.body.description || '',
+        highlight: req.body.highlight || '',
+        date: req.body.date,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+        countryCode: req.body.countryCode || '',
+        // Wenn ein Bild hochgeladen wurde, speichere den relativen Pfad
+        image: req.file ? `/uploads/${req.file.filename}` : ''
+      };
+
+      // Validiere die Daten mit zod
+      const validationResult = insertLocationSchema.safeParse(locationData);
+      
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: "Ungültige Daten", 
+          errors: validationResult.error.errors
+        });
+      }
+
+      // Speichere den neuen Ort in der Datenbank
+      const newLocation = await storage.createLocation(validationResult.data);
+      
+      return res.status(201).json(newLocation);
+    } catch (error) {
+      console.error("Error adding new location:", error);
+      return res.status(500).json({
+        message: "Fehler beim Hinzufügen des neuen Ortes"
       });
     }
   });

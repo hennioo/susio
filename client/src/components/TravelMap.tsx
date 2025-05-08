@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth.tsx";
 import { useLocation } from "wouter";
 import LocationList from "./LocationList";
 import LocationDetails from "./LocationDetails";
+import AddLocationForm from "./AddLocationForm";
 import { ThemeModeToggle } from "./ThemeModeToggle";
 import { Button } from "@/components/ui/button";
-import { List, LogOut } from "lucide-react";
+import { List, LogOut, Plus, Map, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import coupleTravelImage from "../assets/couple-travel.png";
@@ -63,11 +64,36 @@ function MapController({ center, zoom }: { center: LatLngExpression, zoom: numbe
   return null;
 }
 
+// MapClickHandler - Komponente, die Klick-Events auf der Karte abfängt
+function MapClickHandler({ isEditing, onMapClick }: { isEditing: boolean, onMapClick: (lat: number, lng: number) => void }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    // Nur wenn der Bearbeitungsmodus aktiv ist, Klick-Event hinzufügen
+    if (isEditing) {
+      const handleMapClick = (e: L.LeafletMouseEvent) => {
+        const { lat, lng } = e.latlng;
+        onMapClick(lat, lng);
+      };
+      
+      map.on('click', handleMapClick);
+      
+      // Event-Listener entfernen, wenn die Komponente unmountet oder isEditing sich ändert
+      return () => {
+        map.off('click', handleMapClick);
+      };
+    }
+  }, [map, isEditing, onMapClick]);
+  
+  return null;
+}
+
 export default function TravelMap() {
   const [, setLocation] = useLocation();
   const { logout } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
   
   // Zustandsverwaltung
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
@@ -75,6 +101,11 @@ export default function TravelMap() {
   const [showSidebar, setShowSidebar] = useState(!isMobile);
   const [mapCenter, setMapCenter] = useState<LatLngExpression>([20, 0]);
   const [mapZoom, setMapZoom] = useState(2);
+  
+  // Bearbeitungsmodus
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isAddingLocation, setIsAddingLocation] = useState(false);
+  const [newLocationMarker, setNewLocationMarker] = useState<[number, number] | null>(null);
 
   // API-Abfrage für Standorte
   const { data: locations = [], isLoading, error } = useQuery<LocationData[]>({
