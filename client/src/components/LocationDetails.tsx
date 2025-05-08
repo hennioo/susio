@@ -133,7 +133,7 @@ export default function LocationDetails({
                   className="bg-primary hover:bg-primary/90"
                   onClick={onViewOnMap}
                 >
-                  View on Map
+                  Auf Karte anzeigen
                 </Button>
               )}
             </div>

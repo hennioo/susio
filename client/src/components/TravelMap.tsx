@@ -201,6 +201,11 @@ export default function TravelMap() {
       setShowLocationDetails(false);
       setSelectedLocation(null);
       
+      // Im Bearbeitungsmodus die Sidebar wieder anzeigen, da sie sonst nach dem Löschen zuklappt
+      if (isEditMode) {
+        setShowSidebar(true);
+      }
+      
       // QueryCache aktualisieren
       queryClient.invalidateQueries({ queryKey: ["/api/locations"] });
       
