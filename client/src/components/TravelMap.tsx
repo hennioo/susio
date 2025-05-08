@@ -211,6 +211,30 @@ export default function TravelMap() {
                       url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                     />
                     
+                    {/* GeoJSON-Layer für besuchte Länder */}
+                    <GeoJSON 
+                      key="countries-geojson"
+                      data={countriesData as unknown as FeatureCollection}
+                      style={(feature?: Feature) => {
+                        if (!feature || !feature.properties) return {};
+                        
+                        const countryCode = feature.properties.ISO_A2;
+                        
+                        // Prüfen, ob das Land in unseren Standorten vorkommt
+                        const isVisited = locations.some(location => 
+                          location.countryCode.toUpperCase() === countryCode
+                        );
+                        
+                        return {
+                          fillColor: isVisited ? '#e189f5' : 'transparent', // Pastell Lila für besuchte Länder
+                          weight: 1,
+                          color: '#555',
+                          fillOpacity: 0.4,
+                          opacity: 0.5
+                        };
+                      }}
+                    />
+                    
                     {/* Marker für alle Standorte */}
                     {locations.map((location) => (
                       <Marker
