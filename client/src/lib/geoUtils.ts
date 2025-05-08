@@ -82,7 +82,7 @@ export function createLandRestrictedGradient(
   centerLat: number,
   centerLng: number,
   maxRadius: number = 50000, // 50km Radius
-  steps: number = 30
+  steps: number = 50 // Erhöhte Anzahl der Kreise für sanftere Übergänge
 ): Array<{
   radius: number,
   opacity: number,
@@ -94,11 +94,13 @@ export function createLandRestrictedGradient(
   for (let i = 0; i < steps; i++) {
     const progress = i / steps;
     
-    // Berechne abnehmenden Radius
-    const radius = maxRadius * (1 - Math.pow(progress, 0.8));
+    // Berechne abnehmenden Radius mit sanfterem Übergang
+    // Verwende einen weicheren Exponenten für gleichmäßigere Abstände
+    const radius = maxRadius * (1 - Math.pow(progress, 0.7));
     
-    // Berechne zunehmende Opazität
-    const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
+    // Berechne zunehmende Opazität - sanfterer Übergang mit Easing-Funktion
+    // Cubic-Bezier-ähnliche Kurve für weichere Übergänge
+    const opacity = 0.03 + (Math.pow(progress, 1.8) * 0.6);
     
     // Farbverlauf von hellem zu dunklem Orange
     const hue = 38; // Orange-Farbton exakt wie gewünscht (RGB 242,150,12)
@@ -107,9 +109,9 @@ export function createLandRestrictedGradient(
     const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     
     // Nur für bestimmte Stufen den aufwändigen Land-Umriss berechnen
-    // um Performance zu sparen (jeder 5. Kreis)
+    // um Performance zu sparen (jeder 8. Kreis, da wir jetzt mehr Kreise haben)
     let geoJsonFeature = null;
-    if (i % 5 === 0) {
+    if (i % 8 === 0) {
       try {
         geoJsonFeature = createLandRestrictedCircle(centerLat, centerLng, radius);
       } catch (e) {
