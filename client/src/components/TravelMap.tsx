@@ -341,43 +341,48 @@ export default function TravelMap() {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
-                      // Wir erstellen mehr Kreise für einen sanfteren Farbverlauf
-                      // 20 Kreise erzeugen einen sehr weichen Übergang ohne Performanceprobleme
-                      
-                      const circles = [];
-                      const totalCircles = 20;
+                      // Wir erstellen genau zwei Kreise:
+                      // 1. Kleiner innerer Kreis mit stärkerer Opazität
+                      // 2. Großer äußerer Kreis mit sehr geringer Opazität
                       
                       // Orangefarbe für den Kreis
                       const baseColor = '#f2960c';
                       
-                      for (let i = 0; i < totalCircles; i++) {
-                        const progress = i / totalCircles;
-                        const radius = 50000 * (1 - progress * 0.9);  // Bis auf 10% des Radius schrumpfen
-                        
-                        // EXTREM steile exponentielle Abnahme der Opazität 
-                        // In der Mitte deutlich, schon im ersten Schritt fast weg
-                        // e^(-15x) fällt SEHR steil ab
-                        const innerOpacity = 0.25; // Maximum in der Mitte
-                        const opacity = innerOpacity * Math.exp(-15 * progress);
-                        
-                        circles.push(
+                      // Kleiner innerer Kreis (10% des Gesamtradius)
+                      const innerRadius = 5000; // 5km
+                      const innerOpacity = 0.25;
+                      
+                      // Großer äußerer Kreis (voller Radius)
+                      const outerRadius = 50000; // 50km
+                      const outerOpacity = 0.03;
+                      
+                      return (
+                        <div key={`circle-group-${location.id}`}>
+                          {/* Äußerer Kreis (größer, sehr transparent) */}
                           <Circle
-                            key={`gradient-circle-${location.id}-${i}`}
+                            key={`outer-circle-${location.id}`}
                             center={[lat, lng]} 
-                            radius={radius}
+                            radius={outerRadius}
                             pathOptions={{
                               fillColor: baseColor,
-                              fillOpacity: opacity,
+                              fillOpacity: outerOpacity,
                               color: 'transparent',
                               weight: 0
                             }}
                           />
-                        );
-                      }
-                      
-                      return (
-                        <div key={`circle-group-${location.id}`}>
-                          {circles}
+                          
+                          {/* Innerer Kreis (kleiner, deutlicher sichtbar) */}
+                          <Circle
+                            key={`inner-circle-${location.id}`}
+                            center={[lat, lng]} 
+                            radius={innerRadius}
+                            pathOptions={{
+                              fillColor: baseColor,
+                              fillOpacity: innerOpacity,
+                              color: 'transparent',
+                              weight: 0
+                            }}
+                          />
                         </div>
                       );
                     })}
