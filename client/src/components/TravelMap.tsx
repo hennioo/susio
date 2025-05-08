@@ -12,9 +12,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import coupleTravelImage from "../assets/couple-travel.png";
 
 // Leaflet Imports
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, GeoJSON } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import L from "leaflet";
+// Import für die Länder-GeoJSON-Daten
+import countriesData from "../assets/countries.json";
+// Typen für GeoJSON
+import { Feature, FeatureCollection } from "geojson";
 // CSS ist bereits in index.html importiert
 
 // Fix für die Standard-Marker-Icons in Leaflet mit React
@@ -201,11 +205,10 @@ export default function TravelMap() {
                       zoom={mapZoom} 
                     />
                     
-                    {/* Kartenstil mit reduziertem Detail */}
-                    {/* Pastell Kartenstil mit zarteren Farben */}
+                    {/* Kartenstil mit reduziertem Detail und Pastellfarben */}
                     <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://stamen.com">Stamen Design</a>'
-                      url="https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                     />
                     
                     {/* Marker für alle Standorte */}
