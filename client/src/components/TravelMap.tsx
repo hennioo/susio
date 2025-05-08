@@ -341,39 +341,61 @@ export default function TravelMap() {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
-                      // Nutze unsere verbesserte geoUtils-Funktion um den Gradienten zu erzeugen
-                      const gradientData = createLandRestrictedGradient(
-                        lat, 
-                        lng, 
-                        50, // 50km Radius
-                        30  // 30 Kreise für bessere Performance bei dennoch guter Darstellung
-                      );
+                      // Statt vieler einzelner Kreise verwenden wir einen einzigen Kreis mit CSS-Radialgradient
+                      // Dies ist viel performanter und sieht besser aus
                       
-                      // Kreise für die Visualisierung vorbereiten
-                      const circles = [];
+                      // Radialgradient-CSS für den Kreis definieren
+                      const gradientStyle = {
+                        fillOpacity: 1,
+                        // Radialgradient von Innen (intensiveres Orange) nach Außen (transparentes Orange)
+                        fillColor: 'transparent',
+                        className: `location-gradient-${location.id}`,
+                        color: 'transparent',
+                        weight: 0
+                      };
                       
-                      for (let i = 0; i < gradientData.length; i++) {
-                        const item = gradientData[i];
+                      // Der dynamische CSS-Style wird einmalig in der Komponente eingefügt
+                      useEffect(() => {
+                        // Füge eine Stil-Regel für diesen spezifischen Gradienten hinzu
+                        const styleId = `gradient-style-${location.id}`;
                         
-                        circles.push(
-                          <Circle
-                            key={`circle-${location.id}-${i}`}
-                            center={[lat, lng]}
-                            radius={item.radius}
-                            pathOptions={{
-                              fillColor: item.fillColor,
-                              fillOpacity: item.opacity,
-                              color: 'transparent',
-                              weight: 0
-                            }}
-                          />
-                        );
-                      }
+                        // Entferne vorhandenen Stil, falls dieser existiert
+                        const existingStyle = document.getElementById(styleId);
+                        if (existingStyle) {
+                          existingStyle.remove();
+                        }
+                        
+                        // Erstelle eine neue Stil-Regel
+                        const style = document.createElement('style');
+                        style.id = styleId;
+                        style.innerHTML = `
+                          .location-gradient-${location.id} {
+                            background: radial-gradient(
+                              circle, 
+                              hsla(38, 91%, 55%, 0.4) 0%,
+                              hsla(38, 91%, 60%, 0.35) 20%,
+                              hsla(38, 91%, 65%, 0.25) 40%,
+                              hsla(38, 91%, 70%, 0.15) 60%,
+                              hsla(38, 91%, 75%, 0.05) 80%,
+                              transparent 100%
+                            ) !important;
+                          }
+                        `;
+                        document.head.appendChild(style);
+                        
+                        // Stil entfernen, wenn Komponente unmounted
+                        return () => {
+                          document.getElementById(styleId)?.remove();
+                        };
+                      }, [location.id]);
                       
                       return (
-                        <div key={`circle-group-${location.id}`}>
-                          {circles}
-                        </div>
+                        <Circle
+                          key={`gradient-circle-${location.id}`}
+                          center={[lat, lng]} 
+                          radius={50000} // 50km Radius
+                          pathOptions={gradientStyle}
+                        />
                       );
                     })}
                     
