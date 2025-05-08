@@ -61,12 +61,13 @@ export default function LocationDetails({
           <h3 className="text-xl font-bold font-heading text-foreground mb-1">{location.name}</h3>
           <p className="text-sm text-muted-foreground mb-3">{location.date}</p>
           
-          <div className="mb-4">
-            <h4 className="text-sm font-semibold text-foreground mb-1">Our Experience</h4>
-            <p className="text-sm text-muted-foreground">
-              {location.description}
-            </p>
-          </div>
+          {location.description && location.description.trim() !== "" && (
+            <div className="mb-4">
+              <p className="text-sm text-muted-foreground">
+                {location.description}
+              </p>
+            </div>
+          )}
           
           <div className="flex justify-between items-center">
             <div className="text-sm text-muted-foreground flex items-center">
