@@ -12,13 +12,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import coupleTravelImage from "../assets/couple-travel.png";
 
 // Leaflet Imports
-import { MapContainer, TileLayer, Marker, Popup, useMap, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import L from "leaflet";
-// Import für die Länder-GeoJSON-Daten
-import countriesData from "../assets/countries.json";
-// Typen für GeoJSON
-import { Feature, FeatureCollection } from "geojson";
 // CSS ist bereits in index.html importiert
 
 // Fix für die Standard-Marker-Icons in Leaflet mit React
@@ -211,29 +207,54 @@ export default function TravelMap() {
                       url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                     />
                     
-                    {/* GeoJSON-Layer für besuchte Länder */}
-                    <GeoJSON 
-                      key="countries-geojson"
-                      data={countriesData as unknown as FeatureCollection}
-                      style={(feature?: Feature) => {
-                        if (!feature || !feature.properties) return {};
-                        
-                        const countryCode = feature.properties.ISO_A2;
-                        
-                        // Prüfen, ob das Land in unseren Standorten vorkommt
-                        const isVisited = locations.some(location => 
-                          location.countryCode.toUpperCase() === countryCode
-                        );
-                        
-                        return {
-                          fillColor: isVisited ? '#e189f5' : 'transparent', // Pastell Lila für besuchte Länder
-                          weight: 1,
-                          color: '#555',
-                          fillOpacity: 0.4,
-                          opacity: 0.5
-                        };
-                      }}
-                    />
+                    {/* Kreise für besuchte Orte mit Radius von 30km */}
+                    {locations.map((location) => {
+                      const lat = parseFloat(location.latitude);
+                      const lng = parseFloat(location.longitude);
+                      return (
+                        <div key={`circle-group-${location.id}`}>
+                          {/* Äußerer Kreis mit Farbverlauf - 30km */}
+                          <Circle
+                            key={`circle-outer-${location.id}`}
+                            center={[lat, lng]}
+                            radius={30000} // 30km in Metern
+                            pathOptions={{
+                              fillColor: '#e189f5', // Pastell Lila für besuchte Orte
+                              fillOpacity: 0.2,
+                              color: '#c44dd0',
+                              weight: 1,
+                              opacity: 0.3
+                            }}
+                          />
+                          {/* Mittlerer Kreis mit intensiverem Farbton - 20km */}
+                          <Circle
+                            key={`circle-middle-${location.id}`}
+                            center={[lat, lng]}
+                            radius={20000} // 20km in Metern
+                            pathOptions={{
+                              fillColor: '#d470e2', // Intensiveres Lila
+                              fillOpacity: 0.3,
+                              color: '#c44dd0',
+                              weight: 0,
+                              opacity: 0
+                            }}
+                          />
+                          {/* Innerer Kreis mit intensivstem Farbton - 10km */}
+                          <Circle
+                            key={`circle-inner-${location.id}`}
+                            center={[lat, lng]}
+                            radius={10000} // 10km in Metern
+                            pathOptions={{
+                              fillColor: '#c44dd0', // Intensives Lila
+                              fillOpacity: 0.4,
+                              color: '#c44dd0',
+                              weight: 0,
+                              opacity: 0
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
                     
                     {/* Marker für alle Standorte */}
                     {locations.map((location) => (
