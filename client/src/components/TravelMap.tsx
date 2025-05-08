@@ -137,7 +137,7 @@ export default function TravelMap() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <h1 className="text-2xl font-bold font-heading text-foreground">Our Travel Map</h1>
+            <h1 className="text-2xl font-bold font-heading text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Susibert</h1>
           </div>
           <div className="flex items-center space-x-4 relative z-50">
             {isMobile && (

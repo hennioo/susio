@@ -82,7 +82,7 @@ export default function AccessGate() {
         </div>
         <CardContent className="p-8 relative">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-heading text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Our Travel Map</h1>
+            <h1 className="text-3xl font-bold font-heading text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Susibert</h1>
             <p className="mt-2 text-muted-foreground">Enter the access code to view our journey together</p>
           </div>
 
@@ -110,7 +110,7 @@ export default function AccessGate() {
                 className="w-full bg-primary hover:bg-primary/90 transition duration-200"
                 disabled={isLoading}
               >
-                {isLoading ? "Validating..." : "View Our Map"}
+                {isLoading ? "Validating..." : "Enter Susibert"}
               </Button>
             </form>
           </Form>
