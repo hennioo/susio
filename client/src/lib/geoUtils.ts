@@ -1,6 +1,12 @@
 import * as turf from '@turf/turf';
-import type { Feature, FeatureCollection, Polygon, MultiPolygon } from 'geojson';
-import { worldLandBoundaries } from './landBoundaries';
+import { point, circle, polygon, featureCollection } from '@turf/helpers';
+import mask from '@turf/mask';
+import booleanContains from '@turf/boolean-contains';
+import worldLand from 'world-atlas/land-110m.json';
+import type { Feature, FeatureCollection, Point, Polygon, MultiPolygon, Position } from 'geojson';
+
+// WorldLand beinhaltet die GeoJSON-Daten für alle Landmassen der Erde
+const worldLandFeatures = worldLand as FeatureCollection;
 
 /**
  * Erstellt einen auf Land beschränkten Kreis (GeoJSON) für die Visualisierung
@@ -11,38 +17,55 @@ import { worldLandBoundaries } from './landBoundaries';
  * @returns GeoJSON Feature eines auf Land beschränkten Kreises
  */
 export function createLandRestrictedCircle(
-  centerLat: number, 
-  centerLng: number, 
+  centerLat: number,
+  centerLng: number,
   radiusInMeters: number,
   steps: number = 64
 ): Feature<Polygon | MultiPolygon> | null {
   try {
-    // Kreiere einen Punkt an der gewünschten Position
-    const center = turf.point([centerLng, centerLat]);
-    
-    // Erstelle einen Kreis um diesen Punkt herum
-    const circle = turf.circle(center, radiusInMeters / 1000, {
+    // Erstelle einen Kreis mit dem angegebenen Radius
+    const centerPoint = point([centerLng, centerLat]);
+    const circleFeature = circle([centerLng, centerLat], radiusInMeters / 1000, {
       steps: steps,
-      units: 'kilometers',
+      units: 'kilometers'
     });
     
-    // Hole unsere vereinfachte Landkarte
-    const landMass = worldLandBoundaries;
+    // Finde das Land unter dem Punkt (wenn möglich)
+    let landFeatures = worldLandFeatures.features;
     
-    // Berechne die Schnittmenge (Intersection) des Kreises mit dem Land
-    // Dies gibt uns nur den Teil des Kreises, der über Land liegt
-    // worldLandBoundaries ist eine FeatureCollection, wir müssen die features[0] auswählen
-    const landFeature = landMass.features[0];
-    const intersection = turf.intersect(circle, landFeature as any);
+    // Erzwinge Konvertierung zu Feature<Polygon>[]
+    const polygonFeatures = landFeatures.filter(f => 
+      f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'
+    ) as Feature<Polygon | MultiPolygon>[];
     
-    // Wenn es keine Schnittmenge gibt (z.B. mitten im Ozean), geben wir null zurück
-    if (!intersection) {
-      return null;
+    // Finde Land, das den Punkt enthält
+    let landMass = null;
+    for (const feature of polygonFeatures) {
+      try {
+        if (booleanContains(feature, centerPoint)) {
+          landMass = feature;
+          break;
+        }
+      } catch (e) {
+        console.warn('Error checking if point is contained in land feature:', e);
+      }
     }
     
-    return intersection;
-  } catch (error) {
-    console.error("Fehler beim Erstellen des landbeschränkten Kreises:", error);
+    if (!landMass) {
+      return circleFeature; // Fallback zum normalen Kreis, wenn kein Land gefunden wird
+    }
+    
+    // Schnittmenge des Kreises mit dem Land bilden
+    try {
+      // Mask funktioniert gut, um GeoJSON-Features zu beschneiden
+      const maskedCircle = mask(featureCollection([circleFeature]), featureCollection([landMass]));
+      return maskedCircle.features[0] as Feature<Polygon>;
+    } catch (e) {
+      console.error('Error creating land-restricted circle:', e);
+      return circleFeature; // Fallback zum normalen Kreis
+    }
+  } catch (e) {
+    console.error('Error in createLandRestrictedCircle:', e);
     return null;
   }
 }
@@ -58,43 +81,47 @@ export function createLandRestrictedCircle(
 export function createLandRestrictedGradient(
   centerLat: number,
   centerLng: number,
-  maxRadius: number,
+  maxRadius: number = 30000,
   steps: number = 30
 ): Array<{
-  feature: Feature<Polygon | MultiPolygon> | null,
+  radius: number,
   opacity: number,
-  color: string
+  fillColor: string,
+  geoJsonFeature?: Feature<Polygon | MultiPolygon> | null
 }> {
   const result = [];
   
   for (let i = 0; i < steps; i++) {
     const progress = i / steps;
     
-    // Berechne Radius, der mit jedem Schritt abnimmt
-    // Nicht-lineare Abnahme für mehr Dichte an den Übergängen
+    // Berechne abnehmenden Radius
     const radius = maxRadius * (1 - Math.pow(progress, 0.8));
     
-    // Berechne Opazität, die mit jedem Schritt zunimmt
-    // Sanfte Kurve für einen sehr natürlichen Verlauf
+    // Berechne zunehmende Opazität
     const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
     
-    // Farbverlauf basierend auf dem gewünschten Orange RGB(242, 150, 12)
-    const hue = 38; // Orange-Farbton exakt wie gewünscht
+    // Farbverlauf von hellem zu dunklem Orange
+    const hue = 38; // Orange-Farbton exakt wie gewünscht (RGB 242,150,12)
     const saturation = 91; // Hohe Sättigung für kräftiges Orange
     const lightness = 70 - (progress * 40); // Von hell nach deutlich dunkler
+    const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     
-    // Erzeuge den landbeschränkten Kreis mit aktuellem Radius
-    const landRestrictedCircle = createLandRestrictedCircle(
-      centerLat,
-      centerLng,
-      radius
-    );
+    // Nur für bestimmte Stufen den aufwändigen Land-Umriss berechnen
+    // um Performance zu sparen (jeder 5. Kreis)
+    let geoJsonFeature = null;
+    if (i % 5 === 0) {
+      try {
+        geoJsonFeature = createLandRestrictedCircle(centerLat, centerLng, radius);
+      } catch (e) {
+        console.error(`Error creating GeoJSON for gradient step ${i}:`, e);
+      }
+    }
     
-    // Füge das Feature mit seinen Styling-Informationen hinzu
     result.push({
-      feature: landRestrictedCircle,
-      opacity: opacity,
-      color: `hsl(${hue}, ${saturation}%, ${lightness}%)`
+      radius,
+      opacity,
+      fillColor: color,
+      geoJsonFeature
     });
   }
   
