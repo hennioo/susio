@@ -156,6 +156,39 @@ export default function TravelMap() {
       console.error("Error focusing location:", e);
     }
   };
+  
+  // Editiermodus aktivieren/deaktivieren
+  const toggleEditMode = () => {
+    // Wenn wir den Bearbeitungsmodus verlassen, alle zugehörigen Zustände zurücksetzen
+    if (isEditMode) {
+      setNewLocationMarker(null);
+      setIsAddingLocation(false);
+    }
+    
+    setIsEditMode(prev => !prev);
+    
+    toast({
+      title: isEditMode ? "Bearbeitungsmodus deaktiviert" : "Bearbeitungsmodus aktiviert",
+      description: isEditMode 
+        ? "Du kannst jetzt wieder die Karte erkunden." 
+        : "Klicke auf die Karte, um einen neuen Ort hinzuzufügen."
+    });
+  };
+  
+  // Erfolgreiche Hinzufügung eines neuen Ortes
+  const handleLocationAdded = (locationId: number) => {
+    // Bearbeitungsmodus und Formular zurücksetzen
+    setIsAddingLocation(false);
+    setNewLocationMarker(null);
+    
+    // QueryCache aktualisieren, um den neuen Ort anzuzeigen
+    queryClient.invalidateQueries({ queryKey: ["/api/locations"] });
+    
+    toast({
+      title: "Ort hinzugefügt!",
+      description: "Der neue Ort wurde erfolgreich hinzugefügt."
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -207,10 +240,40 @@ export default function TravelMap() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row py-4 gap-4">
+        {/* Bearbeitungsmodus-Steuerung */}
+        <div className="flex justify-between items-center py-2">
+          <div>
+            <Button
+              variant={isEditMode ? "destructive" : "outline"}
+              size="sm"
+              onClick={toggleEditMode}
+              className="space-x-1"
+            >
+              {isEditMode ? (
+                <>
+                  <Map className="h-4 w-4" />
+                  <span>Bearbeiten beenden</span>
+                </>
+              ) : (
+                <>
+                  <Edit className="h-4 w-4" />
+                  <span>Orte bearbeiten</span>
+                </>
+              )}
+            </Button>
+          </div>
+          
+          {isEditMode && (
+            <div className="text-sm text-muted-foreground">
+              Klicke auf die Karte, um einen neuen Ort hinzuzufügen
+            </div>
+          )}
+        </div>
+        
+        <div className="flex flex-col md:flex-row py-2 gap-4">
           {/* Map container */}
           <div className="w-full md:w-3/4 bg-card rounded-xl shadow-md overflow-hidden">
-            <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-8rem)]">
+            <div className="h-[calc(100vh-9rem)] md:h-[calc(100vh-9rem)]">
               {isLoading ? (
                 <div className="h-full flex items-center justify-center">
                   <p className="text-foreground">Loading map...</p>
@@ -295,6 +358,17 @@ export default function TravelMap() {
                       );
                     })}
                     
+                    {/* Klick-Event-Handler für den Bearbeitungsmodus */}
+                    <MapClickHandler 
+                      isEditing={isEditMode} 
+                      onMapClick={(lat, lng) => {
+                        // Setze den neuen Marker an die geklickte Position
+                        setNewLocationMarker([lat, lng]);
+                        // Aktiviere das Hinzufügen-Formular
+                        setIsAddingLocation(true);
+                      }} 
+                    />
+                    
                     {/* Marker für alle Standorte */}
                     {locations.map((location) => (
                       <Marker
@@ -302,7 +376,12 @@ export default function TravelMap() {
                         position={[parseFloat(location.latitude), parseFloat(location.longitude)]}
                         icon={VisitedIcon}
                         eventHandlers={{
-                          click: () => handleLocationSelect(location)
+                          click: () => {
+                            // Im Bearbeitungsmodus keine Details anzeigen
+                            if (!isEditMode) {
+                              handleLocationSelect(location);
+                            }
+                          }
                         }}
                       >
                         <Popup>
@@ -311,6 +390,28 @@ export default function TravelMap() {
                         </Popup>
                       </Marker>
                     ))}
+                    
+                    {/* Temporärer Marker für neue Standorte */}
+                    {isEditMode && newLocationMarker && (
+                      <Marker
+                        position={newLocationMarker}
+                        icon={new L.Icon({
+                          iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+                          shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+                          iconSize: [25, 41],
+                          iconAnchor: [12, 41],
+                          popupAnchor: [1, -34],
+                          shadowSize: [41, 41]
+                        })}
+                      >
+                        <Popup>
+                          <div className="text-sm">Neuer Standort</div>
+                          <div className="text-xs text-muted-foreground">
+                            Lat: {newLocationMarker[0].toFixed(4)}, Lng: {newLocationMarker[1].toFixed(4)}
+                          </div>
+                        </Popup>
+                      </Marker>
+                    )}
                   </MapContainer>
                 </div>
               )}
@@ -339,6 +440,20 @@ export default function TravelMap() {
           onClose={() => setShowLocationDetails(false)}
           onViewOnMap={() => handleLocationFocus(selectedLocation)}
         />
+      )}
+      
+      {/* Add Location Form */}
+      {isAddingLocation && newLocationMarker && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[1001]">
+          <AddLocationForm
+            markerPosition={newLocationMarker}
+            onCancel={() => {
+              setIsAddingLocation(false);
+              setNewLocationMarker(null);
+            }}
+            onSuccess={handleLocationAdded}
+          />
+        </div>
       )}
     </div>
   );
