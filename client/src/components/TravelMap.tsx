@@ -10,7 +10,7 @@ import { List, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import coupleTravelImage from "../assets/couple-travel.png";
-import { worldLandBoundaries } from "@/lib/landBoundaries";
+import { createLandRestrictedGradient } from "@/lib/landGeometryUtils";
 import * as turf from '@turf/turf';
 
 // Leaflet Imports
@@ -217,46 +217,28 @@ export default function TravelMap() {
                       maxZoom={19}
                     />
                     
-                    {/* Einfache Kreise für besuchte Orte mit Farbverlauf (Gradient) */}
+                    {/* Kreise für besuchte Orte mit Farbverlauf (Gradient) */}
                     {locations.map((location) => {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
                       // Erzeugt 30 Kreise mit abnehmendem Radius und zunehmender Intensität
-                      // für einen extrem sanften, fließenden Übergang
-                      const gradientCircles = [];
-                      const baseRadius = 30000; // 30km in Metern
-                      const steps = 30; // Erhöht für noch weicheren Übergang
+                      // für einen sanften, fließenden Übergang
+                      const gradientData = createLandRestrictedGradient(lat, lng, 30);
                       
-                      for (let i = 0; i < steps; i++) {
-                        // Berechne Radius, der mit jedem Schritt abnimmt
-                        // Nicht-lineare Abnahme für mehr Dichte an den Übergängen
-                        const progress = i / steps;
-                        const radius = baseRadius * (1 - Math.pow(progress, 0.8));
-                        
-                        // Berechne Opazität, die mit jedem Schritt zunimmt
-                        // Sanfte Kurve für einen sehr natürlichen Verlauf
-                        const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
-                        
-                        // Farbverlauf basierend auf dem gewünschten Orange RGB(242, 150, 12)
-                        const hue = 38; // Orange-Farbton exakt wie gewünscht
-                        const saturation = 91; // Hohe Sättigung für kräftiges Orange
-                        const lightness = 70 - (progress * 40); // Von hell nach deutlich dunkler
-                        
-                        gradientCircles.push(
-                          <Circle
-                            key={`circle-${location.id}-${i}`}
-                            center={[lat, lng]}
-                            radius={radius}
-                            pathOptions={{
-                              fillColor: `hsl(${hue}, ${saturation}%, ${lightness}%)`,
-                              fillOpacity: opacity,
-                              color: 'transparent',
-                              weight: 0
-                            }}
-                          />
-                        );
-                      }
+                      const gradientCircles = gradientData.map((circle, i) => (
+                        <Circle
+                          key={`circle-${location.id}-${i}`}
+                          center={[lat, lng]}
+                          radius={circle.radius}
+                          pathOptions={{
+                            fillColor: circle.fillColor,
+                            fillOpacity: circle.opacity,
+                            color: 'transparent',
+                            weight: 0
+                          }}
+                        />
+                      ));
                       
                       return (
                         <div key={`circle-group-${location.id}`}>
