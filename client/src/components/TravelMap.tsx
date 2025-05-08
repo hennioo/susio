@@ -212,23 +212,26 @@ export default function TravelMap() {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
-                      // Erzeugt 10 Kreise mit abnehmendem Radius und zunehmender Intensität
-                      // für einen sanfteren, fließenden Übergang
+                      // Erzeugt 30 Kreise mit abnehmendem Radius und zunehmender Intensität
+                      // für einen extrem sanften, fließenden Übergang
                       const gradientCircles = [];
                       const baseRadius = 30000; // 30km in Metern
-                      const steps = 10;
+                      const steps = 30; // Erhöht für noch weicheren Übergang
                       
                       for (let i = 0; i < steps; i++) {
                         // Berechne Radius, der mit jedem Schritt abnimmt
-                        const radius = baseRadius * (1 - (i / steps));
+                        // Nicht-lineare Abnahme für mehr Dichte an den Übergängen
+                        const progress = i / steps;
+                        const radius = baseRadius * (1 - Math.pow(progress, 0.8));
                         
                         // Berechne Opazität, die mit jedem Schritt zunimmt
-                        // Exponentiell zunehmend für einen natürlicheren Verlauf
-                        const opacity = 0.1 + (Math.pow(i / steps, 1.5) * 0.5);
+                        // Sanfte Kurve für einen sehr natürlichen Verlauf
+                        const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
                         
-                        // Farbverlauf von hellerem zu dunklerem Lila
+                        // Farbverlauf von hellerem zu dunklerem Lila mit mehr Zwischenstufen
                         const hue = 290; // Lila-Farbton
-                        const lightness = 80 - (i * 3); // Von hell nach dunkel
+                        const saturation = 75 + (progress * 10); // Leicht zunehmende Sättigung
+                        const lightness = 85 - (progress * 25); // Von sehr hell nach dunkler
                         
                         gradientCircles.push(
                           <Circle
@@ -236,7 +239,7 @@ export default function TravelMap() {
                             center={[lat, lng]}
                             radius={radius}
                             pathOptions={{
-                              fillColor: `hsl(${hue}, 70%, ${lightness}%)`,
+                              fillColor: `hsl(${hue}, ${saturation}%, ${lightness}%)`,
                               fillOpacity: opacity,
                               color: 'transparent',
                               weight: 0
