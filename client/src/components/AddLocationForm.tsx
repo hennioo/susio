@@ -4,11 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarIcon, MapPin, Camera, X } from "lucide-react";
-import { format } from "date-fns";
-import { de } from "date-fns/locale";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { MapPin, Camera, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AddLocationFormProps {
@@ -95,7 +91,13 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
       submitData.append("name", formData.name);
       submitData.append("description", formData.description);
       submitData.append("highlight", ""); // Immer leer senden, da nicht mehr verwendet
-      submitData.append("date", date ? format(date, "MMMM yyyy", { locale: de }) : "");
+      // Formatiere das Datum als "Monat Jahr"
+      const monthNames = [
+        "Januar", "Februar", "März", "April", "Mai", "Juni", 
+        "Juli", "August", "September", "Oktober", "November", "Dezember"
+      ];
+      const dateStr = date ? `${monthNames[date.getMonth()]} ${date.getFullYear()}` : "";
+      submitData.append("date", dateStr);
       submitData.append("latitude", formData.latitude);
       submitData.append("longitude", formData.longitude);
       submitData.append("countryCode", ""); // Immer leer senden, da nicht mehr verwendet
@@ -151,40 +153,33 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Position */}
-        <div className="grid grid-cols-2 gap-2 items-center">
-          <div className="flex items-center gap-2">
+        {/* Position (versteckt, wird automatisch gesetzt) */}
+        <input
+          type="hidden"
+          id="latitude"
+          name="latitude"
+          value={formData.latitude}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="hidden"
+          id="longitude"
+          name="longitude"
+          value={formData.longitude}
+          onChange={handleChange}
+          required
+        />
+        
+        <div className="py-1">
+          <div className="flex items-center gap-2 mb-1">
             <MapPin className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Position</span>
+            <span className="text-sm font-medium">Position auf der Karte markiert</span>
           </div>
-          <div className="text-xs text-muted-foreground italic text-right">
-            {markerPosition ? "(markierte Position)" : "(bitte auf der Karte markieren)"}
-          </div>
-          
-          <div className="col-span-1">
-            <Label htmlFor="latitude">Breitengrad</Label>
-            <Input
-              id="latitude"
-              name="latitude"
-              value={formData.latitude}
-              onChange={handleChange}
-              placeholder="z.B. 48.2082"
-              required
-              className="mt-1"
-            />
-          </div>
-          
-          <div className="col-span-1">
-            <Label htmlFor="longitude">Längengrad</Label>
-            <Input
-              id="longitude"
-              name="longitude"
-              value={formData.longitude}
-              onChange={handleChange}
-              placeholder="z.B. 16.3738"
-              required
-              className="mt-1"
-            />
+          <div className="text-xs text-muted-foreground italic">
+            {markerPosition ? 
+              "Du kannst die Karte schließen und einen neuen Ort markieren, wenn du einen anderen Ort wählen möchtest." :
+              "Bitte markiere zuerst eine Position auf der Karte."}
           </div>
         </div>
         
@@ -202,34 +197,49 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
           />
         </div>
         
-        {/* Datum */}
+        {/* Datum (nur Jahr und Monat) */}
         <div>
-          <Label>Datum des Besuchs</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal mt-1",
-                  !date && "text-muted-foreground"
-                )}
+          <Label>Jahr und Monat des Besuchs</Label>
+          <div className="grid grid-cols-2 gap-3 mt-1">
+            {/* Jahr auswählen */}
+            <div>
+              <select 
+                className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                value={date ? date.getFullYear() : new Date().getFullYear()}
+                onChange={(e) => {
+                  const year = parseInt(e.target.value);
+                  const newDate = date ? new Date(date) : new Date();
+                  newDate.setFullYear(year);
+                  setDate(newDate);
+                }}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "MMMM yyyy", { locale: de }) : <span>Datum auswählen</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                initialFocus
-                captionLayout="dropdown-buttons"
-                fromYear={2000}
-                toYear={2030}
-              />
-            </PopoverContent>
-          </Popover>
+                {Array.from({ length: 31 }, (_, i) => 2000 + i).map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Monat auswählen */}
+            <div>
+              <select 
+                className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                value={date ? date.getMonth() : new Date().getMonth()}
+                onChange={(e) => {
+                  const month = parseInt(e.target.value);
+                  const newDate = date ? new Date(date) : new Date();
+                  newDate.setMonth(month);
+                  setDate(newDate);
+                }}
+              >
+                {[
+                  "Januar", "Februar", "März", "April", "Mai", "Juni", 
+                  "Juli", "August", "September", "Oktober", "November", "Dezember"
+                ].map((month, index) => (
+                  <option key={index} value={index}>{month}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
         
         {/* Beschreibung */}
