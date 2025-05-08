@@ -10,6 +10,7 @@ import { Globe, Plane } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { validateAccessCodeSchema, type ValidateAccessCode } from "@shared/schema";
+import coupleTravelImage from "../assets/couple-travel.png";
 import { 
   Form, 
   FormControl, 
@@ -69,19 +70,20 @@ export default function AccessGate() {
   };
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center p-4">
-      <Card className="w-full max-w-md animate-in fade-in duration-500 border-border">
-        <CardContent className="p-8">
+    <div className="flex min-h-screen w-full items-center justify-center p-4 bg-gradient-to-b from-background to-background/90">
+      <Card className="w-full max-w-md animate-in fade-in duration-500 border-border overflow-hidden">
+        <div className="relative h-60 w-full overflow-hidden">
+          <img 
+            src={coupleTravelImage}
+            alt="Couple traveling in nature"
+            className="object-cover w-full h-full"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+        </div>
+        <CardContent className="p-8 relative">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-heading text-foreground">Our Travel Map</h1>
+            <h1 className="text-3xl font-bold font-heading text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Our Travel Map</h1>
             <p className="mt-2 text-muted-foreground">Enter the access code to view our journey together</p>
-          </div>
-
-          <div className="flex justify-center mb-8">
-            <div className="relative h-32 w-32">
-              <Globe className="h-32 w-32 text-primary" />
-              <Plane className="absolute top-4 right-4 h-8 w-8 text-accent transform rotate-45" />
-            </div>
           </div>
 
           <Form {...form}>
