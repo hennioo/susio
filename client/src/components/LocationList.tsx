@@ -1,12 +1,12 @@
-import { Location } from "@shared/schema";
 import { MapPin, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { LocationData } from "./TravelMap";
 
 interface LocationListProps {
-  locations: Location[];
+  locations: LocationData[];
   isLoading: boolean;
-  onSelectLocation: (location: Location) => void;
+  onSelectLocation: (location: LocationData) => void;
   onCloseSidebar: () => void;
   isMobile: boolean;
 }

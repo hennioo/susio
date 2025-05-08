@@ -1,10 +1,10 @@
-import { Location } from "@shared/schema";
+import type { LocationData } from "./TravelMap";
 import { X, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface LocationDetailsProps {
-  location: Location;
+  location: LocationData;
   onClose: () => void;
   onViewOnMap: () => void;
 }

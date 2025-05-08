@@ -5,7 +5,6 @@ import { useLocation } from "wouter";
 import LocationList from "./LocationList";
 import LocationDetails from "./LocationDetails";
 import { ThemeModeToggle } from "./ThemeModeToggle";
-import { Location } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { List, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +12,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 // Leaflet Imports
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import type { LatLngExpression } from "leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -36,8 +36,21 @@ const VisitedIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
+// Interface for typed location data
+export interface LocationData {
+  id: number;
+  name: string;
+  description: string;
+  date: string;
+  highlight: string;
+  latitude: string;
+  longitude: string;
+  countryCode: string;
+  image: string;
+}
+
 // Hilfskomponente zur Steuerung der Kartenposition
-function MapController({ center, zoom }: { center: [number, number], zoom: number }) {
+function MapController({ center, zoom }: { center: LatLngExpression, zoom: number }) {
   const map = useMap();
   
   useEffect(() => {
@@ -54,14 +67,14 @@ export default function TravelMap() {
   const isMobile = useIsMobile();
   
   // Zustandsverwaltung
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
   const [showLocationDetails, setShowLocationDetails] = useState(false);
   const [showSidebar, setShowSidebar] = useState(!isMobile);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([20, 0]);
+  const [mapCenter, setMapCenter] = useState<LatLngExpression>([20, 0]);
   const [mapZoom, setMapZoom] = useState(2);
 
   // API-Abfrage für Standorte
-  const { data: locations = [], isLoading, error } = useQuery({
+  const { data: locations = [], isLoading, error } = useQuery<LocationData[]>({
     queryKey: ["/api/locations"],
   });
 
@@ -69,9 +82,8 @@ export default function TravelMap() {
   useEffect(() => {
     if (locations.length > 0 && !selectedLocation) {
       try {
-        const locs = locations as any[];
-        const avgLat = locs.reduce((sum, loc) => sum + parseFloat(loc.latitude), 0) / locs.length;
-        const avgLng = locs.reduce((sum, loc) => sum + parseFloat(loc.longitude), 0) / locs.length;
+        const avgLat = locations.reduce((sum, loc) => sum + parseFloat(loc.latitude), 0) / locations.length;
+        const avgLng = locations.reduce((sum, loc) => sum + parseFloat(loc.longitude), 0) / locations.length;
         
         setMapCenter([avgLat, avgLng]);
         setMapZoom(2);
@@ -92,7 +104,7 @@ export default function TravelMap() {
   };
 
   // Standortauswahl-Handler
-  const handleLocationSelect = (location: any) => {
+  const handleLocationSelect = (location: LocationData) => {
     setSelectedLocation(location);
     setShowLocationDetails(true);
     if (isMobile) {
@@ -101,7 +113,7 @@ export default function TravelMap() {
   };
 
   // Handler zum Fokussieren eines Standorts auf der Karte
-  const handleLocationFocus = (location: Location) => {
+  const handleLocationFocus = (location: LocationData) => {
     try {
       setMapCenter([parseFloat(location.latitude), parseFloat(location.longitude)]);
       setMapZoom(6);
@@ -160,13 +172,16 @@ export default function TravelMap() {
                 </div>
               ) : (
                 <div className="relative w-full h-full">
+                  {/* Der initial ausgelieferte Zustand ist nur das Fundament - react-leaflet ersetzt dies beim Mounten */}
                   <MapContainer 
-                    center={[20, 0]} 
-                    zoom={2} 
                     style={{ height: "100%", width: "100%" }} 
-                    zoomControl={true}
+                    zoom={2} 
+                    center={[20, 0] as LatLngExpression}
+                    zoomControl={true} 
                     minZoom={2}
                     maxZoom={8}
+                    scrollWheelZoom={true}
+                    dragging={true}
                     worldCopyJump={true}
                   >
                     {/* Controller zur Aktualisierung der Kartenansicht */}
@@ -177,12 +192,12 @@ export default function TravelMap() {
                     
                     {/* Kartenstil mit reduziertem Detail */}
                     <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                       url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                     />
                     
                     {/* Marker für alle Standorte */}
-                    {(locations as any[]).map((location) => (
+                    {locations.map((location) => (
                       <Marker
                         key={location.id}
                         position={[parseFloat(location.latitude), parseFloat(location.longitude)]}
@@ -207,7 +222,7 @@ export default function TravelMap() {
           {showSidebar && (
             <div className="w-full md:w-1/4 bg-card rounded-xl shadow-md p-4 md:block">
               <LocationList 
-                locations={locations as any[]}
+                locations={locations}
                 isLoading={isLoading}
                 onSelectLocation={handleLocationSelect}
                 onCloseSidebar={() => setShowSidebar(false)}
