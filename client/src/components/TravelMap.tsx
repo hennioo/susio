@@ -113,19 +113,10 @@ export default function TravelMap() {
     queryKey: ["/api/locations"],
   });
 
-  // Wenn Standorte geladen werden, Karte entsprechend positionieren
+  // Wir verwenden keinen automatischen Durchschnitt mehr, da wir immer Deutschland als Zentrum haben wollen
+  // Wir behalten aber den useEffect für zukünftige Änderungen
   useEffect(() => {
-    if (locations.length > 0 && !selectedLocation) {
-      try {
-        const avgLat = locations.reduce((sum, loc) => sum + parseFloat(loc.latitude), 0) / locations.length;
-        const avgLng = locations.reduce((sum, loc) => sum + parseFloat(loc.longitude), 0) / locations.length;
-        
-        setMapCenter([avgLat, avgLng]);
-        setMapZoom(2);
-      } catch (e) {
-        console.error("Error calculating map center:", e);
-      }
-    }
+    // Nichts tun - standardmäßig auf Deutschland zentriert bleiben
   }, [locations, selectedLocation]);
 
   // Logout-Handler
