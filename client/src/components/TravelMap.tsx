@@ -472,6 +472,8 @@ export default function TravelMap() {
           location={selectedLocation}
           onClose={() => setShowLocationDetails(false)}
           onViewOnMap={() => handleLocationFocus(selectedLocation)}
+          onDelete={isEditMode ? handleLocationDelete : undefined}
+          isEditMode={isEditMode}
         />
       )}
       
