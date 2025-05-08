@@ -99,8 +99,9 @@ export default function TravelMap() {
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
   const [showLocationDetails, setShowLocationDetails] = useState(false);
   const [showSidebar, setShowSidebar] = useState(!isMobile);
-  const [mapCenter, setMapCenter] = useState<LatLngExpression>([20, 0]);
-  const [mapZoom, setMapZoom] = useState(2);
+  // Deutschland als Standardzentrum (51.1657, 10.4515 ist die geografische Mitte Deutschlands)
+  const [mapCenter, setMapCenter] = useState<LatLngExpression>([51.1657, 10.4515]);
+  const [mapZoom, setMapZoom] = useState(5); // Näher herangezoomt, um Deutschland gut zu sehen
   
   // Bearbeitungsmodus
   const [isEditMode, setIsEditMode] = useState(false);
@@ -320,11 +321,11 @@ export default function TravelMap() {
                   {/* Der initial ausgelieferte Zustand ist nur das Fundament - react-leaflet ersetzt dies beim Mounten */}
                   <MapContainer 
                     style={{ height: "100%", width: "100%" }} 
-                    zoom={2} 
-                    center={[20, 0] as LatLngExpression}
+                    zoom={5} 
+                    center={[51.1657, 10.4515] as LatLngExpression}
                     zoomControl={true} 
                     minZoom={2}
-                    maxZoom={8}
+                    maxZoom={10}
                     scrollWheelZoom={true}
                     dragging={true}
                     worldCopyJump={true}
