@@ -15,7 +15,7 @@ import coupleTravelImage from "../assets/couple-travel.png";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+// CSS ist bereits in index.html importiert
 
 // Fix für die Standard-Marker-Icons in Leaflet mit React
 const DefaultIcon = new L.Icon({
