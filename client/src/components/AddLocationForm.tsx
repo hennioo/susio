@@ -26,10 +26,10 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    highlight: "",
+    highlight: "", // Behalten für Kompatibilität mit der API, aber nicht anzeigen
     latitude: markerPosition ? markerPosition[0].toString() : "",
     longitude: markerPosition ? markerPosition[1].toString() : "",
-    countryCode: "",
+    countryCode: "", // Behalten für Kompatibilität mit der API, aber nicht anzeigen
   });
 
   // Bild-Upload-Handling
@@ -94,11 +94,11 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
       const submitData = new FormData();
       submitData.append("name", formData.name);
       submitData.append("description", formData.description);
-      submitData.append("highlight", formData.highlight);
+      submitData.append("highlight", ""); // Immer leer senden, da nicht mehr verwendet
       submitData.append("date", date ? format(date, "MMMM yyyy", { locale: de }) : "");
       submitData.append("latitude", formData.latitude);
       submitData.append("longitude", formData.longitude);
-      submitData.append("countryCode", formData.countryCode);
+      submitData.append("countryCode", ""); // Immer leer senden, da nicht mehr verwendet
       
       if (photo) {
         submitData.append("image", photo);
@@ -137,7 +137,7 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
   };
 
   return (
-    <div className="p-4 bg-card rounded-lg shadow-md border border-border max-w-md mx-auto">
+    <div className="p-4 bg-card rounded-lg shadow-md border border-border max-w-md mx-auto max-h-[90vh] overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-primary">Neuen Ort hinzufügen</h2>
         <Button 
@@ -245,18 +245,7 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
           />
         </div>
         
-        {/* Highlight */}
-        <div>
-          <Label htmlFor="highlight">Highlight (optional)</Label>
-          <Input
-            id="highlight"
-            name="highlight"
-            value={formData.highlight}
-            onChange={handleChange}
-            placeholder="Was war besonders beeindruckend?"
-            className="mt-1"
-          />
-        </div>
+        {/* Highlight-Feld entfernt */}
         
         {/* Bild-Upload */}
         <div>
@@ -301,22 +290,7 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
           </p>
         </div>
         
-        {/* Land-Code (optional) */}
-        <div>
-          <Label htmlFor="countryCode">Ländercode (optional)</Label>
-          <Input
-            id="countryCode"
-            name="countryCode"
-            value={formData.countryCode}
-            onChange={handleChange}
-            placeholder="z.B. ES für Spanien"
-            className="mt-1"
-            maxLength={2}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            ISO 3166-1 alpha-2 Code, 2 Buchstaben (z.B. DE, AT, ES)
-          </p>
-        </div>
+        {/* Ländercode-Feld entfernt */}
         
         {/* Buttons */}
         <div className="flex gap-2 pt-2">
