@@ -472,18 +472,37 @@ export default function TravelMap() {
 
       {/* Location Details Modal */}
       {showLocationDetails && selectedLocation && (
-        <LocationDetails
-          location={selectedLocation}
-          onClose={() => setShowLocationDetails(false)}
-          onViewOnMap={() => handleLocationFocus(selectedLocation)}
-          onDelete={isEditMode ? handleLocationDelete : undefined}
-          isEditMode={isEditMode}
-        />
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[1001]" 
+             onClick={(e) => {
+               e.stopPropagation();
+               // Nur schließen, wenn direkt auf den Hintergrund geklickt wurde
+               if (e.target === e.currentTarget) {
+                 setShowLocationDetails(false);
+               }
+             }}>
+          <LocationDetails
+            location={selectedLocation}
+            onClose={() => setShowLocationDetails(false)}
+            onViewOnMap={() => handleLocationFocus(selectedLocation)}
+            onDelete={isEditMode ? handleLocationDelete : undefined}
+            isEditMode={isEditMode}
+          />
+        </div>
       )}
       
       {/* Add Location Form */}
       {isAddingLocation && newLocationMarker && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[1001]">
+        <div 
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-[1001]"
+          onClick={(e) => {
+            e.stopPropagation();
+            // Nur schließen, wenn direkt auf den Hintergrund geklickt wurde
+            if (e.target === e.currentTarget) {
+              setIsAddingLocation(false);
+              setNewLocationMarker(null);
+            }
+          }}
+        >
           <AddLocationForm
             markerPosition={newLocationMarker}
             onCancel={() => {

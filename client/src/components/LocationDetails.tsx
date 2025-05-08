@@ -36,11 +36,8 @@ export default function LocationDetails({
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      onClick={handleBackdropClick}
-    >
-      <Card className="max-w-md w-full mx-auto overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
+    <div onClick={(e) => e.stopPropagation()} className="max-w-md w-full mx-auto animate-in zoom-in-95 duration-200">
+      <Card className="w-full overflow-hidden flex flex-col">
         <div className="relative">
           <div className="w-full h-48 bg-orange-500 relative">
             {location.image ? (
