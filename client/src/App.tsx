@@ -22,7 +22,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" storageKey="travel-map-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="travel-map-theme">
         <AuthProvider>
           <TooltipProvider>
             <Toaster />
