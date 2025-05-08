@@ -13,7 +13,7 @@ import type { Feature, FeatureCollection, Point, Polygon, MultiPolygon, Position
 export function createLandRestrictedGradient(
   centerLat: number,
   centerLng: number,
-  maxRadiusKm: number = 30,
+  maxRadiusKm: number = 50, // 50km Radius
   steps: number = 30
 ): Array<{
   radius: number,

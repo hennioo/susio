@@ -351,7 +351,7 @@ export default function TravelMap() {
                       
                       // Erzeugt 30 Kreise mit abnehmendem Radius und zunehmender Intensität
                       const circles = [];
-                      const maxRadius = 30000;
+                      const maxRadius = 50000; // 50km Radius
                       const steps = 30;
                       
                       for (let i = 0; i < steps; i++) {

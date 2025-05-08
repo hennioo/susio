@@ -81,7 +81,7 @@ export function createLandRestrictedCircle(
 export function createLandRestrictedGradient(
   centerLat: number,
   centerLng: number,
-  maxRadius: number = 30000,
+  maxRadius: number = 50000, // 50km Radius
   steps: number = 30
 ): Array<{
   radius: number,
