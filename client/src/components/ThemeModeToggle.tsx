@@ -9,13 +9,15 @@ export function ThemeModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        {/* Erhöhter z-index von 50 auf 9999 damit er garantiert über allem liegt */}
+        <Button variant="outline" size="icon" className="relative z-[9999]" style={{ zIndex: 9999 }}>
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      {/* Auch für das Dropdown-Menü höheren z-index setzen */}
+      <DropdownMenuContent align="end" className="z-[9999]" style={{ zIndex: 9999 }}>
         <DropdownMenuItem onClick={() => setTheme("light")}>
           Light
         </DropdownMenuItem>

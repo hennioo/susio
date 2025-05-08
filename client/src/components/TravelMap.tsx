@@ -126,8 +126,8 @@ export default function TravelMap() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm h-20 relative z-50">
+      {/* Header mit sehr hohem z-index damit alles immer über der Karte liegt */}
+      <header className="bg-card shadow-sm h-20 fixed top-0 left-0 right-0 z-[1000]" style={{ zIndex: 1000 }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary flex-shrink-0">
@@ -139,26 +139,28 @@ export default function TravelMap() {
             </div>
             <h1 className="text-2xl font-bold font-heading text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Susibert</h1>
           </div>
-          <div className="flex items-center space-x-4 relative z-50">
+          <div className="flex items-center space-x-4">
             {isMobile && (
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={() => setShowSidebar(!showSidebar)}
-                className="md:hidden relative z-50"
+                className="md:hidden z-[1001]"
+                style={{ zIndex: 1001 }}
               >
                 <List className="h-4 w-4 mr-2" />
                 Locations
               </Button>
             )}
-            <div className="relative z-50">
+            <div>
               <ThemeModeToggle />
             </div>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={handleLogout}
-              className="relative z-50"
+              className="z-[1001]"
+              style={{ zIndex: 1001 }}
             >
               <LogOut className="h-4 w-4 mr-2" />
               Exit
@@ -166,6 +168,9 @@ export default function TravelMap() {
           </div>
         </div>
       </header>
+      
+      {/* Platz für den Header */}
+      <div className="h-20"></div>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
