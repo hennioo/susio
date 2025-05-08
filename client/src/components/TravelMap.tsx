@@ -207,51 +207,47 @@ export default function TravelMap() {
                       url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                     />
                     
-                    {/* Kreise für besuchte Orte mit Radius von 30km */}
+                    {/* Kreise für besuchte Orte mit fließendem Farbverlauf (Gradient) */}
                     {locations.map((location) => {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
+                      
+                      // Erzeugt 10 Kreise mit abnehmendem Radius und zunehmender Intensität
+                      // für einen sanfteren, fließenden Übergang
+                      const gradientCircles = [];
+                      const baseRadius = 30000; // 30km in Metern
+                      const steps = 10;
+                      
+                      for (let i = 0; i < steps; i++) {
+                        // Berechne Radius, der mit jedem Schritt abnimmt
+                        const radius = baseRadius * (1 - (i / steps));
+                        
+                        // Berechne Opazität, die mit jedem Schritt zunimmt
+                        // Exponentiell zunehmend für einen natürlicheren Verlauf
+                        const opacity = 0.1 + (Math.pow(i / steps, 1.5) * 0.5);
+                        
+                        // Farbverlauf von hellerem zu dunklerem Lila
+                        const hue = 290; // Lila-Farbton
+                        const lightness = 80 - (i * 3); // Von hell nach dunkel
+                        
+                        gradientCircles.push(
+                          <Circle
+                            key={`circle-${location.id}-${i}`}
+                            center={[lat, lng]}
+                            radius={radius}
+                            pathOptions={{
+                              fillColor: `hsl(${hue}, 70%, ${lightness}%)`,
+                              fillOpacity: opacity,
+                              color: 'transparent',
+                              weight: 0
+                            }}
+                          />
+                        );
+                      }
+                      
                       return (
                         <div key={`circle-group-${location.id}`}>
-                          {/* Äußerer Kreis mit Farbverlauf - 30km */}
-                          <Circle
-                            key={`circle-outer-${location.id}`}
-                            center={[lat, lng]}
-                            radius={30000} // 30km in Metern
-                            pathOptions={{
-                              fillColor: '#e189f5', // Pastell Lila für besuchte Orte
-                              fillOpacity: 0.2,
-                              color: '#c44dd0',
-                              weight: 1,
-                              opacity: 0.3
-                            }}
-                          />
-                          {/* Mittlerer Kreis mit intensiverem Farbton - 20km */}
-                          <Circle
-                            key={`circle-middle-${location.id}`}
-                            center={[lat, lng]}
-                            radius={20000} // 20km in Metern
-                            pathOptions={{
-                              fillColor: '#d470e2', // Intensiveres Lila
-                              fillOpacity: 0.3,
-                              color: '#c44dd0',
-                              weight: 0,
-                              opacity: 0
-                            }}
-                          />
-                          {/* Innerer Kreis mit intensivstem Farbton - 10km */}
-                          <Circle
-                            key={`circle-inner-${location.id}`}
-                            center={[lat, lng]}
-                            radius={10000} // 10km in Metern
-                            pathOptions={{
-                              fillColor: '#c44dd0', // Intensives Lila
-                              fillOpacity: 0.4,
-                              color: '#c44dd0',
-                              weight: 0,
-                              opacity: 0
-                            }}
-                          />
+                          {gradientCircles}
                         </div>
                       );
                     })}
