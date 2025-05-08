@@ -128,28 +128,28 @@ export default function TravelMap() {
     <div className="min-h-screen bg-background">
       {/* Header mit sehr hohem z-index damit alles immer über der Karte liegt */}
       <header className="bg-card shadow-sm h-20 fixed top-0 left-0 right-0 z-[1000]" style={{ zIndex: 1000 }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary flex-shrink-0">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 h-full flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-primary flex-shrink-0">
               <img 
                 src={coupleTravelImage} 
                 alt="Couple traveling" 
                 className="h-full w-full object-cover"
               />
             </div>
-            <h1 className="text-2xl font-bold font-heading text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Susibert</h1>
+            <h1 className="text-xl font-bold font-heading text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Susibert</h1>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             {isMobile && (
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={() => setShowSidebar(!showSidebar)}
-                className="md:hidden z-[1001]"
+                className="md:hidden z-[1001] px-2"
                 style={{ zIndex: 1001 }}
               >
-                <List className="h-4 w-4 mr-2" />
-                Locations
+                <List className="h-4 w-4" />
+                <span className="sr-only">Locations</span>
               </Button>
             )}
             <div>
@@ -159,11 +159,11 @@ export default function TravelMap() {
               variant="ghost" 
               size="sm" 
               onClick={handleLogout}
-              className="z-[1001]"
+              className="z-[1001] !px-2"
               style={{ zIndex: 1001 }}
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Exit
+              <LogOut className="h-4 w-4" />
+              <span className="sr-only md:not-sr-only md:ml-2">Exit</span>
             </Button>
           </div>
         </div>
