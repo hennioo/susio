@@ -341,28 +341,41 @@ export default function TravelMap() {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
-                      // Statt vieler einzelner Kreise verwenden wir einen einzigen Kreis mit CSS-Radialgradient
-                      // Dies ist viel performanter und sieht besser aus
+                      // Wir erstellen mehrere Kreise mit abnehmender Opazität, aber nicht so viele wie vorher
+                      // Nur 5 Kreise sollten ausreichen, um einen schönen Farbverlauf zu erzeugen
                       
-                      // Radialgradient-CSS für den Kreis definieren
-                      const gradientStyle = {
-                        fillOpacity: 0.4,
-                        // Orangefarbe für den Kreis
-                        fillColor: '#f2960c',
-                        color: 'transparent',
-                        weight: 0
-                      };
+                      const circles = [];
+                      const totalCircles = 5;
                       
-                      // Wir brauchen keinen speziellen Klassennamen mehr
-                      // Einfacher Kreis mit Transparenz ist ausreichend
+                      // Orangefarbe für den Kreis
+                      const baseColor = '#f2960c';
+                      
+                      for (let i = 0; i < totalCircles; i++) {
+                        const progress = i / totalCircles;
+                        const radius = 50000 * (1 - progress * 0.8);  // Nicht komplett auf 0 schrumpfen
+                        
+                        // Opazität nimmt nach außen hin ab
+                        const opacity = 0.5 - (progress * 0.4);
+                        
+                        circles.push(
+                          <Circle
+                            key={`gradient-circle-${location.id}-${i}`}
+                            center={[lat, lng]} 
+                            radius={radius}
+                            pathOptions={{
+                              fillColor: baseColor,
+                              fillOpacity: opacity,
+                              color: 'transparent',
+                              weight: 0
+                            }}
+                          />
+                        );
+                      }
                       
                       return (
-                        <Circle
-                          key={`gradient-circle-${location.id}`}
-                          center={[lat, lng]} 
-                          radius={50000} // 50km Radius
-                          pathOptions={gradientStyle}
-                        />
+                        <div key={`circle-group-${location.id}`}>
+                          {circles}
+                        </div>
                       );
                     })}
                     
