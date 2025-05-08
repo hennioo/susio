@@ -206,17 +206,13 @@ export default function TravelMap() {
                       zoom={mapZoom} 
                     />
                     
-                    {/* Terrain-Kartenstil mit Relief und Höheninformationen */}
+                    {/* Stamen Toner Lite - Minimalistischer, clean-design Kartenstil */}
                     <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                    />
-                    
-                    {/* Zusätzliche Relief-Layer */}
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a>'
-                      url="https://tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png"
-                      opacity={0.5}
+                      attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                      url="https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.png"
+                      subdomains="abcd"
+                      minZoom={1}
+                      maxZoom={16}
                     />
                     
                     {/* Kreise für besuchte Orte mit fließendem Farbverlauf (Gradient) */}

@@ -80,20 +80,13 @@
   }
 }
 
-/* Kartenstile für angepasste Wasser-Farben */
+/* Anpassungen für Stamen Toner Lite */
 .leaflet-container {
-  /* Erhöht die Sättigung und ändert den Farbton für intensiveres Türkis-Blau im Wasser */
-  filter: hue-rotate(-15deg) saturate(1.4);
+  /* Minimal anpassen für Stamen Toner Lite */
+  filter: contrast(1.1) brightness(1.03);
 }
 
-/* Stil-Anpassungen für Wasserflächen speziell - 
-   Alle Tiles werden beeinflusst, aber die Änderung ist bei Wasser am auffälligsten */
+/* Leichten Sepia-Effekt für ein wärmeres Papier-Gefühl bei Toner Lite */
 .leaflet-tile-pane {
-  filter: contrast(1.2) saturate(1.5);
-}
-
-/* Spezifischer Stil für die Hintergrundkarten-Ebene */
-.leaflet-layer:first-child {
-  /* Noch spezifischere Anpassung für die Kartenlayer */
-  filter: brightness(1.05) contrast(1.1);
+  filter: sepia(0.05) saturate(0.95);
 }
