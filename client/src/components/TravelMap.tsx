@@ -354,8 +354,9 @@ export default function TravelMap() {
                         const progress = i / totalCircles;
                         const radius = 50000 * (1 - progress * 0.9);  // Bis auf 10% des Radius schrumpfen
                         
-                        // Opazität nimmt nach außen hin ab - sanftere Verteilung
-                        const opacity = 0.5 - (Math.pow(progress, 0.7) * 0.47);
+                        // Opazität nimmt SOFORT von außen nach innen zu - linearer Anstieg
+                        // Beginnt bei fast 0 und steigt dann bis zu 0.4 an
+                        const opacity = 0.03 + (0.37 * (1 - progress));
                         
                         circles.push(
                           <Circle
