@@ -345,8 +345,8 @@ export default function TravelMap() {
                       const gradientData = createLandRestrictedGradient(
                         lat, 
                         lng, 
-                        50000, // 50km Radius
-                        100    // 100 Kreise für absolut nahtlose Übergänge
+                        50, // 50km Radius
+                        30  // 30 Kreise für bessere Performance bei dennoch guter Darstellung
                       );
                       
                       // Kreise für die Visualisierung vorbereiten
