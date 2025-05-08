@@ -3,6 +3,8 @@ import {
   locations, type Location, type InsertLocation,
   accessCodes, type AccessCode, type InsertAccessCode
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -156,4 +158,69 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Datenbankbasierte Speicherimplementierung
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async getLocations(): Promise<Location[]> {
+    return await db.select().from(locations);
+  }
+
+  async getLocation(id: number): Promise<Location | undefined> {
+    const [location] = await db.select().from(locations).where(eq(locations.id, id));
+    return location || undefined;
+  }
+
+  async createLocation(insertLocation: InsertLocation): Promise<Location> {
+    const [location] = await db
+      .insert(locations)
+      .values(insertLocation)
+      .returning();
+    return location;
+  }
+
+  async deleteLocation(id: number): Promise<boolean> {
+    const result = await db
+      .delete(locations)
+      .where(eq(locations.id, id))
+      .returning({ id: locations.id });
+    
+    return result.length > 0;
+  }
+
+  async getAccessCodes(): Promise<AccessCode[]> {
+    return await db.select().from(accessCodes);
+  }
+
+  async validateAccessCode(code: string): Promise<boolean> {
+    const codes = await db.select().from(accessCodes);
+    return codes.some(accessCode => accessCode.code === code);
+  }
+
+  async createAccessCode(insertAccessCode: InsertAccessCode): Promise<AccessCode> {
+    const [accessCode] = await db
+      .insert(accessCodes)
+      .values(insertAccessCode)
+      .returning();
+    return accessCode;
+  }
+}
+
+// Datenbank Storage für Produktion 
+export const storage = new DatabaseStorage();
