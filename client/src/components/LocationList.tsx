@@ -1,7 +1,8 @@
-import { MapPin, X } from "lucide-react";
+import { MapPin, X, Flag } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { LocationData } from "./TravelMap";
+import { getCountryName, getFallbackImageUrl } from "@/lib/utils";
 
 interface LocationListProps {
   locations: LocationData[];
@@ -58,12 +59,36 @@ export default function LocationList({
                 onClick={() => onSelectLocation(location)}
               >
                 <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-primary-foreground" />
+                  <div className="flex-shrink-0 h-12 w-12 rounded-md overflow-hidden">
+                    {location.image ? (
+                      <img 
+                        src={location.image} 
+                        alt={location.name}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null;
+                          target.src = getFallbackImageUrl(location.name);
+                        }}
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-primary flex items-center justify-center">
+                        <MapPin className="h-5 w-5 text-primary-foreground" />
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-foreground">{location.name}</h3>
-                    <p className="text-xs text-muted-foreground">{location.date}</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-medium text-foreground truncate">{location.name}</h3>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <span>{location.date}</span>
+                      {location.countryCode && (
+                        <div className="flex items-center gap-1">
+                          <span>•</span>
+                          <Flag className="h-3 w-3" />
+                          <span>{getCountryName(location.countryCode)}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
