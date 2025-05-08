@@ -341,21 +341,21 @@ export default function TravelMap() {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
-                      // Wir erstellen mehrere Kreise mit abnehmender Opazität, aber nicht so viele wie vorher
-                      // Nur 5 Kreise sollten ausreichen, um einen schönen Farbverlauf zu erzeugen
+                      // Wir erstellen mehr Kreise für einen sanfteren Farbverlauf
+                      // 20 Kreise erzeugen einen sehr weichen Übergang ohne Performanceprobleme
                       
                       const circles = [];
-                      const totalCircles = 5;
+                      const totalCircles = 20;
                       
                       // Orangefarbe für den Kreis
                       const baseColor = '#f2960c';
                       
                       for (let i = 0; i < totalCircles; i++) {
                         const progress = i / totalCircles;
-                        const radius = 50000 * (1 - progress * 0.8);  // Nicht komplett auf 0 schrumpfen
+                        const radius = 50000 * (1 - progress * 0.9);  // Bis auf 10% des Radius schrumpfen
                         
-                        // Opazität nimmt nach außen hin ab
-                        const opacity = 0.5 - (progress * 0.4);
+                        // Opazität nimmt nach außen hin ab - sanftere Verteilung
+                        const opacity = 0.5 - (Math.pow(progress, 0.7) * 0.47);
                         
                         circles.push(
                           <Circle
