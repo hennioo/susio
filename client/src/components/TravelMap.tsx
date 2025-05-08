@@ -352,19 +352,19 @@ export default function TravelMap() {
                         // Berechne abnehmenden Radius
                         const radius = maxRadius * (1 - Math.pow(progress, 0.8));
                         
-                        // Verbesserte Opazitätsfunktion für einen transparenteren Mittelpunkt
-                        // Startet bei fast 0 und steigt langsamer an
+                        // Stark verbesserte Opazitätsfunktion - fast vollständige Transparenz im Zentrum
+                        // und nur an den äußeren Rändern wird der Farbverlauf sichtbar
                         let opacity = 0;
                         
-                        if (i < steps * 0.1) {
-                          // Innerste 10% der Kreise sind fast transparent (leichte Steigung)
-                          opacity = 0.01 + (progress * 0.05);
-                        } else if (i < steps * 0.3) {
-                          // Mittlere Kreise haben moderate Transparenz
-                          opacity = 0.015 + (progress * 0.15);
+                        if (i < steps * 0.6) {
+                          // Innerste 60% der Kreise sind extrem transparent
+                          opacity = 0.001 + (progress * 0.01); // Minimale Sichtbarkeit (0.1%-1.1%)
+                        } else if (i < steps * 0.8) {
+                          // Mittlere Kreise haben geringe Transparenz
+                          opacity = 0.01 + (progress * 0.05); // 1.1% bis 6%
                         } else {
-                          // Äußere Kreise werden intensiver
-                          opacity = 0.02 + (Math.pow(progress, 1.8) * 0.55);
+                          // Nur die äußersten 20% der Kreise werden intensiver für den Effekt
+                          opacity = 0.025 + (Math.pow(progress, 2) * 0.15); // 2.5% bis 17.5%
                         }
                         
                         // Farbverlauf von hellem zu dunklem Orange
