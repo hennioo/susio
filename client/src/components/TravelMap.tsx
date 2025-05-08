@@ -27,9 +27,9 @@ const DefaultIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-// Orange Marker für besuchte Orte
+// Gold/Orange Marker für besuchte Orte (RGB 242,150,12 ist näher an Gold als an Standard-Orange)
 const VisitedIcon = new L.Icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png",
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -233,10 +233,10 @@ export default function TravelMap() {
                         // Sanfte Kurve für einen sehr natürlichen Verlauf
                         const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
                         
-                        // Farbverlauf von hellerem zu dunklerem Orange mit mehr Zwischenstufen
-                        const hue = 30; // Orange-Farbton
-                        const saturation = 85 + (progress * 15); // Höhere Sättigung für kräftigeres Orange
-                        const lightness = 80 - (progress * 25); // Von sehr hell nach dunkler
+                        // Farbverlauf basierend auf dem gewünschten Orange RGB(242, 150, 12)
+                        const hue = 38; // Orange-Farbton exakt wie gewünscht
+                        const saturation = 91; // Hohe Sättigung für kräftiges Orange
+                        const lightness = 70 - (progress * 40); // Von hell nach deutlich dunkler
                         
                         gradientCircles.push(
                           <Circle
