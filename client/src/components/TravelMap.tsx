@@ -341,7 +341,7 @@ export default function TravelMap() {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
-                      // Erzeugt 30 Kreise mit abnehmendem Radius und zunehmender Intensität
+                      // Erzeugt Kreise mit abnehmendem Radius und zunehmender Intensität
                       const circles = [];
                       const maxRadius = 50000; // 50km Radius
                       const steps = 30;
@@ -352,8 +352,20 @@ export default function TravelMap() {
                         // Berechne abnehmenden Radius
                         const radius = maxRadius * (1 - Math.pow(progress, 0.8));
                         
-                        // Berechne zunehmende Opazität
-                        const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
+                        // Verbesserte Opazitätsfunktion für einen transparenteren Mittelpunkt
+                        // Startet bei fast 0 und steigt langsamer an
+                        let opacity = 0;
+                        
+                        if (i < steps * 0.1) {
+                          // Innerste 10% der Kreise sind fast transparent (leichte Steigung)
+                          opacity = 0.01 + (progress * 0.05);
+                        } else if (i < steps * 0.3) {
+                          // Mittlere Kreise haben moderate Transparenz
+                          opacity = 0.015 + (progress * 0.15);
+                        } else {
+                          // Äußere Kreise werden intensiver
+                          opacity = 0.02 + (Math.pow(progress, 1.8) * 0.55);
+                        }
                         
                         // Farbverlauf von hellem zu dunklem Orange
                         const hue = 38; // Orange-Farbton exakt wie gewünscht (RGB 242,150,12)
