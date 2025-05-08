@@ -11,7 +11,7 @@ import { List, LogOut, Plus, Map, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import coupleTravelImage from "../assets/couple-travel.png";
-import { createLandRestrictedGradient } from "@/lib/landGeometryUtils";
+import { createLandRestrictedGradient } from "@/lib/geoUtils";
 import * as turf from '@turf/turf';
 
 // Leaflet Imports
@@ -341,48 +341,44 @@ export default function TravelMap() {
                       const lat = parseFloat(location.latitude);
                       const lng = parseFloat(location.longitude);
                       
-                      // Wir erstellen genau zwei Kreise:
-                      // 1. Kleiner innerer Kreis mit stärkerer Opazität
-                      // 2. Großer äußerer Kreis mit sehr geringer Opazität
+                      // Erzeugt 30 Kreise mit abnehmendem Radius und zunehmender Intensität
+                      const circles = [];
+                      const maxRadius = 50000; // 50km Radius
+                      const steps = 30;
                       
-                      // Orangefarbe für den Kreis
-                      const baseColor = '#f2960c';
-                      
-                      // Kleiner innerer Kreis (10% des Gesamtradius)
-                      const innerRadius = 5000; // 5km
-                      const innerOpacity = 0.25;
-                      
-                      // Großer äußerer Kreis (voller Radius)
-                      const outerRadius = 50000; // 50km
-                      const outerOpacity = 0.03;
+                      for (let i = 0; i < steps; i++) {
+                        const progress = i / steps;
+                        
+                        // Berechne abnehmenden Radius
+                        const radius = maxRadius * (1 - Math.pow(progress, 0.8));
+                        
+                        // Berechne zunehmende Opazität
+                        const opacity = 0.04 + (Math.pow(progress, 2.2) * 0.5);
+                        
+                        // Farbverlauf von hellem zu dunklem Orange
+                        const hue = 38; // Orange-Farbton exakt wie gewünscht (RGB 242,150,12)
+                        const saturation = 91; // Hohe Sättigung für kräftiges Orange
+                        const lightness = 70 - (progress * 40); // Von hell nach deutlich dunkler
+                        const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                        
+                        circles.push(
+                          <Circle
+                            key={`circle-${location.id}-${i}`}
+                            center={[lat, lng]}
+                            radius={radius}
+                            pathOptions={{
+                              fillColor: color,
+                              fillOpacity: opacity,
+                              color: 'transparent',
+                              weight: 0
+                            }}
+                          />
+                        );
+                      }
                       
                       return (
                         <div key={`circle-group-${location.id}`}>
-                          {/* Äußerer Kreis (größer, sehr transparent) */}
-                          <Circle
-                            key={`outer-circle-${location.id}`}
-                            center={[lat, lng]} 
-                            radius={outerRadius}
-                            pathOptions={{
-                              fillColor: baseColor,
-                              fillOpacity: outerOpacity,
-                              color: 'transparent',
-                              weight: 0
-                            }}
-                          />
-                          
-                          {/* Innerer Kreis (kleiner, deutlicher sichtbar) */}
-                          <Circle
-                            key={`inner-circle-${location.id}`}
-                            center={[lat, lng]} 
-                            radius={innerRadius}
-                            pathOptions={{
-                              fillColor: baseColor,
-                              fillOpacity: innerOpacity,
-                              color: 'transparent',
-                              weight: 0
-                            }}
-                          />
+                          {circles}
                         </div>
                       );
                     })}

@@ -1,5 +1,5 @@
 import * as turf from '@turf/turf';
-import { point, polygon, featureCollection } from '@turf/helpers';
+import { point, circle, polygon, featureCollection } from '@turf/helpers';
 import mask from '@turf/mask';
 import booleanContains from '@turf/boolean-contains';
 import worldLand from 'world-atlas/land-110m.json';
@@ -25,7 +25,7 @@ export function createLandRestrictedCircle(
   try {
     // Erstelle einen Kreis mit dem angegebenen Radius
     const centerPoint = point([centerLng, centerLat]);
-    const circleFeature = turf.circle([centerLng, centerLat], radiusInMeters / 1000, {
+    const circleFeature = circle([centerLng, centerLat], radiusInMeters / 1000, {
       steps: steps,
       units: 'kilometers'
     });
@@ -82,7 +82,7 @@ export function createLandRestrictedGradient(
   centerLat: number,
   centerLng: number,
   maxRadius: number = 50000, // 50km Radius
-  steps: number = 100 // Sehr hohe Anzahl der Kreise für vollkommen nahtlose Übergänge
+  steps: number = 50 // Erhöhte Anzahl der Kreise für sanftere Übergänge
 ): Array<{
   radius: number,
   opacity: number,
@@ -94,13 +94,13 @@ export function createLandRestrictedGradient(
   for (let i = 0; i < steps; i++) {
     const progress = i / steps;
     
-    // Berechne abnehmenden Radius mit extrem sanftem Übergang
-    // Linearer Abstieg für gleichmäßigste Abstände
-    const radius = maxRadius * (1 - progress);
+    // Berechne abnehmenden Radius mit sanfterem Übergang
+    // Verwende einen weicheren Exponenten für gleichmäßigere Abstände
+    const radius = maxRadius * (1 - Math.pow(progress, 0.7));
     
-    // Sehr niedrige Opazität für jeden einzelnen Kreis, damit der Kartengrund sichtbar bleibt
-    // Die Gesamtopazität ergibt sich aus der Überlagerung aller Kreise
-    const opacity = 0.008 + (Math.pow(progress, 2.5) * 0.03);
+    // Berechne zunehmende Opazität - sanfterer Übergang mit Easing-Funktion
+    // Cubic-Bezier-ähnliche Kurve für weichere Übergänge
+    const opacity = 0.03 + (Math.pow(progress, 1.8) * 0.6);
     
     // Farbverlauf von hellem zu dunklem Orange
     const hue = 38; // Orange-Farbton exakt wie gewünscht (RGB 242,150,12)
