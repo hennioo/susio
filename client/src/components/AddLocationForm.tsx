@@ -40,11 +40,11 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Überprüfe die Dateigröße (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
+      // Überprüfe die Dateigröße (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
         toast({
           title: "Fehler",
-          description: "Das Bild darf nicht größer als 5MB sein.",
+          description: "Das Bild darf nicht größer als 10MB sein.",
           variant: "destructive"
         });
         return;
@@ -139,7 +139,10 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
   };
 
   return (
-    <div className="p-4 bg-card rounded-lg shadow-md border border-border max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+    <div 
+      className="p-4 bg-card rounded-lg shadow-md border border-border max-w-md mx-auto max-h-[90vh] overflow-y-auto" 
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-primary">Neuen Ort hinzufügen</h2>
         <Button 
@@ -292,11 +295,11 @@ export default function AddLocationForm({ markerPosition, onCancel, onSuccess }:
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <Camera className="h-8 w-8 mx-auto text-muted-foreground" />
-              <p className="text-sm text-muted-foreground mt-2">Bild hochladen (max. 5MB)</p>
+              <p className="text-sm text-muted-foreground mt-2">Bild hochladen (max. 10MB)</p>
             </div>
           )}
           <p className="text-xs text-muted-foreground mt-1">
-            Unterstützte Formate: JPG, PNG, GIF
+            Unterstützte Formate: JPG, PNG, GIF, HEIC (iPhone)
           </p>
         </div>
         
