@@ -56,6 +56,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Statischer Dateizugriff für Uploads
   app.use('/uploads', express.static(uploadDir));
 
+  // Health Check Endpoint für Replit Deployments
+  app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+
+  // Root-Endpunkt für Replit Health Checks
+  app.get("/", (req, res) => {
+    res.status(200).json({ status: "ok", message: "Susibert travel map API is running" });
+  });
+
   // API Routes
   
   // Validate access code
