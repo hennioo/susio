@@ -61,8 +61,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(200).json({ status: "ok" });
   });
 
-  // Root-Endpunkt für Replit Health Checks
-  app.get("/", (req, res) => {
+  // Health Check API-Endpunkt an /api
+  app.get("/api", (req, res) => {
     res.status(200).json({ status: "ok", message: "Susibert travel map API is running" });
   });
 
