@@ -35,7 +35,7 @@ export default function AccessGate() {
 
   const onSubmit = async (data: ValidateAccessCode) => {
     setIsLoading(true);
-    
+
     try {
       const response = await fetch("/api/validate-code", {
         method: "POST",
@@ -44,9 +44,9 @@ export default function AccessGate() {
         },
         body: JSON.stringify(data),
       });
-      
+
       const result = await response.json();
-      
+
       if (response.ok && result.valid) {
         login();
         setLocation("/map");
