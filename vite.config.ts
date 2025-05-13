@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  root: path.resolve(__dirname, "client"),
+  root: path.resolve(new URL('.', import.meta.url).pathname, "client"),
   plugins: [react()],
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
