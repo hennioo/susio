@@ -7,7 +7,7 @@ export default defineConfig({
   root: path.resolve(new URL('.', import.meta.url).pathname, "client"),
   plugins: [react()],
   build: {
-    outDir: path.resolve(__dirname, "dist/public"),
+    outDir: path.resolve(new URL('.', import.meta.url).pathname, "dist/public"),
     emptyOutDir: true,
   },
   resolve: {
