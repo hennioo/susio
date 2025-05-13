@@ -1,0 +1,33 @@
+2025-05-13T07:03:50.258988849Z ==> Cloning from https://github.com/hennioo/susio
+2025-05-13T07:03:51.416342173Z ==> Checking out commit 345c32735bab9a4d753fefee56d27757d21fe8b9 in branch main
+2025-05-13T07:03:58.497049736Z ==> Using Node.js version 22.14.0 (default)
+2025-05-13T07:03:58.527503163Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-05-13T07:04:00.690252003Z ==> Using Bun version 1.1.0 (default)
+2025-05-13T07:04:00.690270023Z ==> Docs on specifying a bun version: https://render.com/docs/bun-version
+2025-05-13T07:04:00.74401141Z ==> Running build command 'npm install && npx vite build && npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist'...
+2025-05-13T07:04:14.932509853Z 
+2025-05-13T07:04:14.975477724Z added 680 packages, and audited 681 packages in 14s
+2025-05-13T07:04:14.975501765Z 
+2025-05-13T07:04:14.975505625Z 182 packages are looking for funding
+2025-05-13T07:04:14.975511275Z   run `npm fund` for details
+2025-05-13T07:04:14.975513895Z 
+2025-05-13T07:04:14.975516555Z 10 vulnerabilities (5 moderate, 5 high)
+2025-05-13T07:04:14.975519045Z 
+2025-05-13T07:04:14.975521685Z To address all issues (including breaking changes), run:
+2025-05-13T07:04:14.975524715Z   npm audit fix --force
+2025-05-13T07:04:14.975527145Z 
+2025-05-13T07:04:14.975529825Z Run `npm audit` for details.
+2025-05-13T07:04:15.963297734Z vite v5.4.19 building for production...
+2025-05-13T07:04:16.01151647Z transforming...
+2025-05-13T07:04:18.91414134Z ✓ 1648 modules transformed.
+2025-05-13T07:04:18.918568767Z x Build failed in 2.93s
+2025-05-13T07:04:18.918619278Z error during build:
+2025-05-13T07:04:18.918627988Z [vite:load-fallback] Could not load /opt/render/project/src/client/src/shared/schema (imported by client/src/components/AccessGate.tsx): ENOENT: no such file or directory, open '/opt/render/project/src/client/src/shared/schema'
+2025-05-13T07:04:18.918635968Z     at async open (node:internal/fs/promises:638:25)
+2025-05-13T07:04:18.918641539Z     at async Object.readFile (node:internal/fs/promises:1242:14)
+2025-05-13T07:04:18.918645968Z     at async Object.load (file:///opt/render/project/src/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65341:25)
+2025-05-13T07:04:18.918651829Z     at async PluginDriver.hookFirstAndGetPlugin (file:///opt/render/project/src/node_modules/rollup/dist/es/shared/node-entry.js:22092:28)
+2025-05-13T07:04:18.918657449Z     at async file:///opt/render/project/src/node_modules/rollup/dist/es/shared/node-entry.js:21097:33
+2025-05-13T07:04:18.918662379Z     at async Queue.work (file:///opt/render/project/src/node_modules/rollup/dist/es/shared/node-entry.js:22320:32)
+2025-05-13T07:04:18.987187559Z ==> Build failed 😞
+2025-05-13T07:04:19.002563846Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
