@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/auth.tsx";
 import { Globe, Plane } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { validateAccessCodeSchema, type ValidateAccessCode } from "@shared/schema";
+import { validateAccessCodeSchema, type ValidateAccessCode } from "../../../shared/schema";
 import coupleTravelImage from "../assets/couple-travel.png";
 import { 
   Form, 
